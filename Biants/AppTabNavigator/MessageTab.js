@@ -8,7 +8,7 @@ import FAB from 'react-native-fab';
 import Board from './Board';
 import ChatTab from './ChatTab';
 import HomeTab from './HomeTab';
-import firebase from '../src/config'
+import firebase from '../src/config';
 
 const databaseURL = "https://biants-project.firebaseio.com/";
 
@@ -35,6 +35,7 @@ export default class MessageTab extends React.Component {
     super();
     this.state = {
     messages: {},
+    keys: {},
     };
     }
 
@@ -45,22 +46,12 @@ export default class MessageTab extends React.Component {
       .then(querySnapshot => {
         const messages = querySnapshot.docs.map(doc => doc.data());
             this.setState({messages: messages});
-      });
-    }
-
-    _delete(id) {
-    return fetch(`${databaseURL}/messages/${id}.json`, {
-    method: 'DELETE'
-    }).then(res => {
-    if(res.status != 200) {
-    throw new Error(res.statusText);
-    }
-    return res.json();
-    }).then(() => {
-    let nextState = this.state.messages;
-    delete nextState[id];
-    this.setState({messages: nextState});
-    });
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                console.log(doc.id);
+            this.setState({keys:doc.id});
+            });
+        });
     }
 
     componentDidMount() {
@@ -79,8 +70,12 @@ export default class MessageTab extends React.Component {
       this.setState({ dialogVisible: false });
     };
 
-    handleDelete = (id) => {
-      this._delete(id);
+    handleDelete(key) {
+      firebase.firestore().collection("messages").doc(key)
+      .delete().then(function() {
+      }).catch(function(error) {
+        console.error("Error removing document: ", error);
+      });
       this.handleCancel();
     };
 
@@ -96,8 +91,9 @@ export default class MessageTab extends React.Component {
           <View>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
+              const key = this.state.keys;
               return (
-                <Swipeout right={swipeoutBtns} onPress={() => this.showDialog()}>
+                <Swipeout right={swipeoutBtns} onPress={() => this.showDialog()} style={style.swipeout}>
                 <View style={style.list} key={id}>
                   <TouchableOpacity onPress={() => this._goToChat()}>
                     <Text style={style.data}>{message.message}</Text>
@@ -105,7 +101,7 @@ export default class MessageTab extends React.Component {
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 삭제하기</Dialog.Title>
                     <Dialog.Description>삭제하시겠습니까?</Dialog.Description>
-                    <Dialog.Button label="네" onPress={() => this.handleDelete(id)}/>
+                    <Dialog.Button label="네" onPress={() => this.handleDelete(key)}/>
                     <Dialog.Button label="아니오" onPress={this.handleCancel}/>
                   </Dialog.Container>
                 </View>
@@ -143,6 +139,9 @@ const style = StyleSheet.create({
   },
   message: {
     width: 350,
+  },
+  swipeout: {
+    backgroundColor: '#FFF',
   }
 });
 
