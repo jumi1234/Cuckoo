@@ -103,7 +103,8 @@ export default class MessageTab extends React.Component {
                   <TouchableOpacity onPress={() => this.props.navigation.dispatch(StackActions.push({
                   routeName: 'ChatTab',
                     params: {
-                      collectionId: message.dateTime
+                      collectionId: key,
+                      replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver
                     },
                   }))}>
                     <Text style={style.data}>{message.message}</Text>

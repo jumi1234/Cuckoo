@@ -36,21 +36,66 @@ export default class ChatTab extends React.Component {
 
     componentDidMount() {
       const collectionId = this.props.navigation.getParam('collectionId', 'no');
+      const replyReceiver = this.props.navigation.getParam('replyReceiver', 'no');
+      console.log(replyReceiver);
       this._get();
     }
 
     _get() {
       const collectionId = this.props.navigation.getParam('collectionId', 'no');
-      var emailad = firebase.auth().currentUser.email;
-      firebase.firestore().collection("messages").doc(collectionId).collection(collectionId)
+      firebase.firestore().collection("messages").doc(collectionId).collection(collectionId).orderBy('dateTime', 'asc')
         .get()
         .then(querySnapshot => {
           const messages = querySnapshot.docs.map(doc => doc.data());
               this.setState({messages: messages});
               console.log(this.state.messages);
           });
+    }
+
+    onSendPress() {
+      var date = new Date().getDate(); //Current Date
+      if(date < 10) {
+        date = '0' + new Date().getDate(); //Current Minutes
+      }
+      var month = new Date().getMonth() + 1; //Current Month
+      if(month < 10) {
+        month = '0' + new Date().getMonth() + 1;
+      }
+      var year = new Date().getFullYear(); //Current Year
+      var hours = new Date().getHours(); //Current Hours
+      if(hours < 10) {
+        hours = '0' + new Date().getHours();
+      }
+      var min = new Date().getMinutes(); //Current Minutes
+      if(min < 10) {
+        min = '0' + new Date().getMinutes(); //Current Minutes
+      }
+      var sec = new Date().getSeconds(); //Current Seconds
+      if(sec < 10) {
+        sec = '0' + new Date().getSeconds();
+      }
+      var dateTime = year.toString() + month + date + hours + min + sec;
+
+      const collectionId = this.props.navigation.getParam('collectionId', 'no');
+      const replyReceiver = this.props.navigation.getParam('replyReceiver', 'no');
+
+      firebase.firestore().collection('messages').doc(collectionId).collection(collectionId).add({
+        message: this.state.reply,
+        receiver: replyReceiver,
+        sender: firebase.auth().currentUser.email,
+        dateTime: dateTime,
+      });
+
+      firebase.firestore().collection('messages').doc(collectionId).set({
+        message: this.state.reply,
+        receiver: replyReceiver,
+        sender: firebase.auth().currentUser.email,
+        dateTime: dateTime,
+      });
+
 
     }
+
 
 handleSubmit = () => {
 const word = {
@@ -78,7 +123,7 @@ this.props.navigation.dispatch(pushAction);
               const message = this.state.messages[id];
               return (
                 <View style={styles.chatContainer} key={id}>
-                    <Text style={styles.textContainer}>{message.message}</Text>
+                    <Text style={styles.reply}>{message.message}</Text>
                 </View>
               );
             })}
@@ -134,6 +179,15 @@ backgroundColor: 'black'
 textContainer: {
 flex: 1,
 justifyContent: 'center'
+},
+message: {
+alignItems: 'flex-end',
+backgroundColor: 'gray'
+},
+reply: {
+flex: 1,
+justifyContent: 'center',
+backgroundColor: 'white'
 },
 sendContainer: {
 justifyContent: 'flex-end',
