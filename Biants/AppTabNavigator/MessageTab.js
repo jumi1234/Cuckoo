@@ -25,7 +25,7 @@ export default class MessageTab extends React.Component {
       const pushAction = StackActions.push({
       routeName: 'ChatTab',
         params: {
-          myUserId: 9,
+          myUserId: 9
         },
       });
       this.props.navigation.dispatch(pushAction);
@@ -77,6 +77,11 @@ export default class MessageTab extends React.Component {
         console.error("Error removing document: ", error);
       });
       this.handleCancel();
+      this.props.navigation.dispatch(StackActions.reset({
+          index: 0,
+          key: null,
+          actions: [NavigationActions.navigate({ routeName: 'MainScreen'})],
+      }));
     };
 
     render() {
@@ -93,9 +98,14 @@ export default class MessageTab extends React.Component {
               const message = this.state.messages[id];
               const key = this.state.keys;
               return (
-                <Swipeout right={swipeoutBtns} onPress={() => this.showDialog()} style={style.swipeout}>
-                <View style={style.list} key={id}>
-                  <TouchableOpacity onPress={() => this._goToChat()}>
+                <Swipeout right={swipeoutBtns} onPress={() => this.showDialog()} style={style.swipeout} key={id}>
+                <View style={style.list}>
+                  <TouchableOpacity onPress={() => this.props.navigation.dispatch(StackActions.push({
+                  routeName: 'ChatTab',
+                    params: {
+                      collectionId: message.dateTime
+                    },
+                  }))}>
                     <Text style={style.data}>{message.message}</Text>
                   </TouchableOpacity>
                   <Dialog.Container visible={this.state.dialogVisible}>

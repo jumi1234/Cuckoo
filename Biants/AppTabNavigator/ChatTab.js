@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, TouchableHighlight, ScrollView } from 'react-native';
 import { Icon } from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions } from 'react-navigation';
 import Textarea from 'react-native-textarea';
+import firebase from '../src/config';
 
 const databaseURL = "https://biants-project.firebaseio.com/";
 
@@ -25,30 +26,31 @@ export default class ChatTab extends React.Component {
       this.props.navigation.dispatch(pushAction);
     }
 
-  constructor() {
-  super();
-  this.state = {
-  words: {},
-  word: '',
-  weight: ''
-  };
-  }
+    constructor(props) {
+    super(props);
+    this.state = {
+      messages: {},
+      reply: '',
+      };
+    }
 
-  _post(word) {
-return fetch(`${databaseURL}/words.json`, {
-method: 'POST',
-body: JSON.stringify(word)
-}).then(res => {
-if(res.status != 200) {
-throw new Error(res.statusText);
-}
-return res.json();
-}).then(data => {
-let nextState = this.state.words;
-nextState[data.name] = word;
-this.setState({words: nextState});
-});
-}
+    componentDidMount() {
+      const collectionId = this.props.navigation.getParam('collectionId', 'no');
+      this._get();
+    }
+
+    _get() {
+      const collectionId = this.props.navigation.getParam('collectionId', 'no');
+      var emailad = firebase.auth().currentUser.email;
+      firebase.firestore().collection("messages").doc(collectionId).collection(collectionId)
+        .get()
+        .then(querySnapshot => {
+          const messages = querySnapshot.docs.map(doc => doc.data());
+              this.setState({messages: messages});
+              console.log(this.state.messages);
+          });
+
+    }
 
 handleSubmit = () => {
 const word = {
@@ -65,33 +67,41 @@ routeName: 'HomeTab',
 this.props.navigation.dispatch(pushAction);
 }
 
-render() {
-  return (
-  <View style={styles.container}>
-  <View style={styles.chatContainer}>
-  <Text style={{color: '#000'}}>Chat</Text>
-  </View>
-  <View style={styles.inputContainer}>
-  <View style={styles.textContainer}>
-  <TextInput
-  style={styles.input}
-  value={this.state.message}
-  onChangeText={(text) => this.setState({message: text})}
-  />
-  </View>
-  <View style={styles.sendContainer}>
-  <TouchableHighlight
-  underlayColor={'#4e4273'}
-  onPress={() => this.onSendPress()}
-  >
-  <Text style={styles.sendLabel}>SEND</Text>
-  </TouchableHighlight>
-  </View>
-  </View>
-  </View>
-  )
 
-}
+
+    render() {
+      return (
+        <View style={styles.container}>
+          <ScrollView style={styles.scrollview}>
+          <View>
+            {Object.keys(this.state.messages).map(id => {
+              const message = this.state.messages[id];
+              return (
+                <View style={styles.chatContainer} key={id}>
+                    <Text style={styles.textContainer}>{message.message}</Text>
+                </View>
+              );
+            })}
+          </View>
+          </ScrollView>
+          <View style={styles.inputContainer}>
+            <View style={styles.textContainer}>
+              <TextInput
+              style={styles.input}
+              value={this.state.reply}
+              onChangeText={(text) => this.setState({reply: text})}/>
+            </View>
+            <View style={styles.sendContainer}>
+              <TouchableHighlight
+              underlayColor={'#4e4273'}
+              onPress={() => this.onSendPress()}>
+                <Text style={styles.sendLabel}>보내기</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </View>
+      )
+    }
 }
 
 var styles = StyleSheet.create({
@@ -117,7 +127,7 @@ alignItems: 'stretch'
 inputContainer: {
 flex: 1,
 flexDirection: 'row',
-justifyContent: 'space-around',
+
 alignItems: 'center',
 backgroundColor: 'black'
 },
@@ -146,4 +156,7 @@ borderRadius: 2,
 alignSelf: 'center',
 backgroundColor: '#ffffff'
 },
+scrollview: {
+  height: '80%'
+}
 });

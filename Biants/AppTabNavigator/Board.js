@@ -79,7 +79,6 @@ export default class Board extends React.Component {
   //    });
   //   }
 
-
   _get() {
     var emailad = firebase.auth().currentUser.email;
     firebase.firestore().collection("users").where('email', '==', emailad)
