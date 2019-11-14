@@ -115,7 +115,7 @@ export default class MessageTab extends React.Component {
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 삭제하기</Dialog.Title>
                     <Dialog.Description>삭제하시겠습니까?</Dialog.Description>
-                    <Dialog.Button label="네" onPress={() => {console.log("id"+message.id); this.handleDelete(key)}}/>
+                    <Dialog.Button label="네" onPress={() => this.handleDelete(key)}/>
                     <Dialog.Button label="아니오" onPress={this.handleCancel}/>
                   </Dialog.Container>
                 </View>
