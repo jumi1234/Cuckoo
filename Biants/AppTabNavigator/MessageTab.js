@@ -41,7 +41,7 @@ export default class MessageTab extends React.Component {
 
     _get() {
     var emailad = firebase.auth().currentUser.email;
-    firebase.firestore().collection("messages").where('sender', '==', emailad).orderBy('dateTime', 'desc')
+    firebase.firestore().collection("messages").where('talker', 'array-contains', emailad).orderBy('dateTime', 'desc')
       .get()
       .then(querySnapshot => {
         const messages = querySnapshot.docs.map(doc => doc.data());
@@ -109,7 +109,7 @@ export default class MessageTab extends React.Component {
                       collectionId: message.id,
                       replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver
                     },
-                  })); console.log(message.id)} }>
+                  }))} }>
                     <Text style={style.data}>{message.message}</Text>
                   </TouchableOpacity>
                   <Dialog.Container visible={this.state.dialogVisible}>

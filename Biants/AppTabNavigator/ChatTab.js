@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, TouchableHighlight, ScrollView } from 'react-native';
 import { Icon } from 'native-base';
-import { createStackNavigator, createAppContainer, StackActions } from 'react-navigation';
+import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
 import Textarea from 'react-native-textarea';
 import firebase from '../src/config';
 
@@ -31,14 +31,28 @@ export default class ChatTab extends React.Component {
     this.state = {
       messages: {},
       reply: '',
+      isSender: '',
       };
     }
 
     componentDidMount() {
       const collectionId = this.props.navigation.getParam('collectionId', 'no');
       const replyReceiver = this.props.navigation.getParam('replyReceiver', 'no');
-      console.log(replyReceiver);
+
       this._get();
+
+      var emailad = firebase.auth().currentUser.email;
+
+      firebase.firestore().collection("messages").doc(collectionId)
+        .get()
+        .then(querySnapshot => {
+          if(! querySnapshot.empty) {
+            const data = querySnapshot.data();
+            if(data.sender == emailad) {
+              this.setState({isSender: 1});
+            }
+         }
+      });
     }
 
     _get() {
@@ -48,7 +62,6 @@ export default class ChatTab extends React.Component {
         .then(querySnapshot => {
           const messages = querySnapshot.docs.map(doc => doc.data());
               this.setState({messages: messages});
-              console.log(this.state.messages);
           });
     }
 
@@ -92,8 +105,14 @@ export default class ChatTab extends React.Component {
         sender: firebase.auth().currentUser.email,
         dateTime: dateTime,
         id: collectionId,
+        talker: [firebase.auth().currentUser.email, replyReceiver]
       });
 
+      this.props.navigation.dispatch(StackActions.reset({
+          index: 0,
+          key: null,
+          actions: [NavigationActions.navigate({ routeName: 'MainScreen'})],
+      }));
 
     }
 
@@ -116,6 +135,7 @@ this.props.navigation.dispatch(pushAction);
 
 
     render() {
+      if(this.state.isSender != 1) {
       return (
         <View style={styles.container}>
           <ScrollView style={styles.scrollview}>
@@ -147,6 +167,29 @@ this.props.navigation.dispatch(pushAction);
           </View>
         </View>
       )
+    } else if(this.state.isSender == 1) {
+      return (
+        <View style={styles.container}>
+          <ScrollView style={styles.scrollview}>
+          <View>
+            {Object.keys(this.state.messages).map(id => {
+              const message = this.state.messages[id];
+              return (
+                <View style={styles.chatContainer} key={id}>
+                    <Text style={styles.reply}>{message.message}</Text>
+                </View>
+              );
+            })}
+          </View>
+          </ScrollView>
+          <View style={styles.inputContainer}>
+            <View style={styles.alreadytextContainer}>
+              <Text style={styles.text}>이미 쪽지를 보냈습니다.</Text>
+            </View>
+          </View>
+        </View>
+      )
+    }
     }
 }
 
@@ -181,6 +224,11 @@ textContainer: {
 flex: 1,
 justifyContent: 'center'
 },
+alreadytextContainer: {
+flex: 1,
+flexDirection: 'row',
+justifyContent: 'center'
+},
 message: {
 alignItems: 'flex-end',
 backgroundColor: 'gray'
@@ -213,5 +261,10 @@ backgroundColor: '#ffffff'
 },
 scrollview: {
   height: '80%'
+},
+text: {
+  flex: 1,
+  justifyContent: 'center',
+  color: 'white'
 }
 });
