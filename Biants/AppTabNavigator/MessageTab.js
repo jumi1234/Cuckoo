@@ -41,15 +41,16 @@ export default class MessageTab extends React.Component {
 
     _get() {
     var emailad = firebase.auth().currentUser.email;
-    firebase.firestore().collection("messages").where('receiver', '==', emailad).orderBy('dateTime', 'desc')
+    firebase.firestore().collection("messages").where('sender', '==', emailad).orderBy('dateTime', 'desc')
       .get()
       .then(querySnapshot => {
         const messages = querySnapshot.docs.map(doc => doc.data());
             this.setState({messages: messages});
             querySnapshot.forEach(doc => {
                 const data = doc.data();
-                console.log(doc.id);
+                //console.log(doc.id);
             this.setState({keys:doc.id});
+            console.log(this.state.keys);
             });
         });
     }
@@ -70,8 +71,8 @@ export default class MessageTab extends React.Component {
       this.setState({ dialogVisible: false });
     };
 
-    handleDelete(key) {
-      firebase.firestore().collection("messages").doc(key)
+    handleDelete(id) {
+      firebase.firestore().collection("messages").doc(id)
       .delete().then(function() {
       }).catch(function(error) {
         console.error("Error removing document: ", error);
@@ -85,34 +86,36 @@ export default class MessageTab extends React.Component {
     };
 
     render() {
-      var swipeoutBtns = [
-        {
-          text: '삭제',
-          onPress: () => this.showDialog()
-        }
-      ]
       return (
         <View style={style.container}>
           <View>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
               const key = this.state.keys;
+              var dd;
+              var swipeoutBtns = [
+                {
+                  text: '삭제',
+                  onPress: () => [id = message.id, this.handleDelete(id)]
+                }
+              ]
+
               return (
-                <Swipeout right={swipeoutBtns} onPress={() => this.showDialog()} style={style.swipeout} key={id}>
+                <Swipeout right={swipeoutBtns} style={style.swipeout} key={id}>
                 <View style={style.list}>
-                  <TouchableOpacity onPress={() => this.props.navigation.dispatch(StackActions.push({
+                  <TouchableOpacity onPress={() => {this.props.navigation.dispatch(StackActions.push({
                   routeName: 'ChatTab',
                     params: {
-                      collectionId: key,
+                      collectionId: message.id,
                       replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver
                     },
-                  }))}>
+                  })); console.log(message.id)} }>
                     <Text style={style.data}>{message.message}</Text>
                   </TouchableOpacity>
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 삭제하기</Dialog.Title>
                     <Dialog.Description>삭제하시겠습니까?</Dialog.Description>
-                    <Dialog.Button label="네" onPress={() => this.handleDelete(key)}/>
+                    <Dialog.Button label="네" onPress={() => {console.log("id"+message.id); this.handleDelete(key)}}/>
                     <Dialog.Button label="아니오" onPress={this.handleCancel}/>
                   </Dialog.Container>
                 </View>

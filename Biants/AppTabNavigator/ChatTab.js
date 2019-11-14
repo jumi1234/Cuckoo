@@ -91,6 +91,7 @@ export default class ChatTab extends React.Component {
         receiver: replyReceiver,
         sender: firebase.auth().currentUser.email,
         dateTime: dateTime,
+        id: collectionId,
       });
 
 
