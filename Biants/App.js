@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import MainScreen from './MainScreen';
 import HomeTab from './AppTabNavigator/HomeTab';
@@ -39,7 +39,16 @@ const AppStackNavigator = createStackNavigator({
   Main:{
      screen: loginState ? MainScreen : Login,
      navigationOptions: {
-         title: 'CUCKOO',
+
+headerTitle: (
+    <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
+        <Image
+            source={require('./AppTabNavigator/img/cukcoo_logo.png')}
+            style={{width:170, height:45}}
+        />
+    </View>
+)
+
        }
   },
   MainScreen: {
