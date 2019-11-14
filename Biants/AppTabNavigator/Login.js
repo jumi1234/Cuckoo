@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, TextInput, View, Button, AsyncStorage } from 'react-native';
-import { SwitchNavigator, NavigationActions } from 'react-navigation';
+import { SwitchNavigator, NavigationActions,StackActions } from 'react-navigation';
 import firebase from '../src/config';
 import Register from './Register';
 import MainScreen from '../MainScreen';
@@ -19,7 +19,11 @@ export default class Login extends React.Component {
           .then(() => {
             AsyncStorage.setItem('loggedIn', password);
             AsyncStorage.setItem('userId', email);
-            this.props.navigation.navigate('MainScreen');
+            this.props.navigation.dispatch(StackActions.reset({
+                index: 0,
+                key: null,
+                actions: [NavigationActions.navigate({ routeName: 'MainScreen' })],
+            }));
           }).catch(() => { this.setState({ error: 'Authentication failed.' });
       });
   }
