@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import Dialog from "react-native-dialog";
 import {Icon} from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
 import { Div } from 'react-native-div';
-import ActionButton from 'react-native-action-button';
 import Board from './Board';
 import ChatTab from './ChatTab';
 import MessageTab from './MessageTab';
@@ -22,13 +21,14 @@ export default class HomeTab extends React.Component {
         )
     }
 
-    constructor() {
-    super();
+    constructor(props) {
+    super(props);
     this.state = {
     words: {},
     messages: {},
     message: '',
     receiver: '',
+    collectionId: '',
     };
     }
 
@@ -98,23 +98,33 @@ export default class HomeTab extends React.Component {
       var dateTime = year.toString() + month + date + hours + min + sec;
 
       if( (this.state.receiver) == (firebase.auth().currentUser.email) ) {
-      alert("내가 보낸 쪽지입니다");
+      alert("내가 작성한 글입니다");
 
       } else {
-      firebase.firestore().collection('messages').add({
+      firebase.firestore().collection('messages').doc(dateTime.toString()).set({
         message: this.state.message,
         receiver: this.state.receiver,
         sender: firebase.auth().currentUser.email,
         dateTime: dateTime,
-        })
-      this.setState({ dialogVisible: false });
+        id: dateTime,
+        talker: [this.state.receiver, firebase.auth().currentUser.email],
+      });
+
+      firebase.firestore().collection('messages').doc(dateTime.toString()).collection(dateTime.toString()).add({
+        message: this.state.message,
+        receiver: this.state.receiver,
+        sender: firebase.auth().currentUser.email,
+        dateTime: dateTime,
+        id: dateTime,
+        talker: [this.state.receiver, firebase.auth().currentUser.email],
+      });
   }
+
     this.props.navigation.dispatch(StackActions.reset({
         index: 0,
         key: null,
-        actions: [NavigationActions.navigate({ routeName: 'MainScreen'})],
+        actions: [NavigationActions.navigate({ routeName: 'MainScreen' })],
     }));
-
     }
 
     render() {
@@ -126,10 +136,21 @@ export default class HomeTab extends React.Component {
               const word = this.state.words[id];
               return (
                 <View style={style.list} key={id}>
-                  <TouchableOpacity onPress={() => {this.setState({receiver: word.id}); this.showDialog();}}>
-                    <Text style={style.data}>[{word.region}/{word.age}/{word.gender}]</Text>
-                    <Text style={style.data}>{word.word}</Text>
-                  </TouchableOpacity>
+                  <View style={style.line}>
+                    <Image
+                        source={ word.gender == '남자' ? require('./img/male.jpg') : require('./img/female.jpg') }
+                        style={style.genderImg}
+                    />
+                    <View style={style.info}>
+                      <Text style={style.data}>[{word.region}/{word.age}세]</Text>
+                      <Text style={style.word}>{word.word}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => {this.setState({receiver: word.id}); this.showDialog();}}>
+                      <View style={style.send}>
+                      <Icon style={style.sendbtn} name='mail'/>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 보내기</Dialog.Title>
                     <Dialog.Input style={style.message} name="message" value={this.state.message} onChangeText={(text) => this.setState({message: text})} placeholder="내용을 입력하세요" maxLength={120}></Dialog.Input>
@@ -147,30 +168,61 @@ export default class HomeTab extends React.Component {
 }
 
 const style = StyleSheet.create({
-    container: {
-      flex:1,
-      flexDirection: 'column',
-    },
-    head: {
-    flex:0.1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:'#D9E5FF',
+  container: {
+    flex:1,
+    flexDirection: 'column',
+    borderTopWidth: 12,
+    borderColor: '#efefef',
   },
   list: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    borderColor:'#eee',
-    borderBottomWidth:0.3,
+    borderColor: '#efefef',
+    borderBottomWidth: 6,
     padding: 5,
   },
+  line: {
+    flex: 1,
+    flexDirection: 'row',
+    margin: 15,
+  },
+  genderImg: {
+    width: 52,
+    height: 52,
+    justifyContent: 'center',
+  },
+  info: {
+    flex: 2,
+    flexDirection: 'column',
+    borderColor: '#efefef',
+    borderRightWidth: 1,
+  },
   data: {
-    fontSize: 20
+    marginLeft: 15,
+    fontSize: 19,
+  },
+  word: {
+    marginLeft: 15,
+    fontSize: 17
   },
   message: {
     width: 350,
+  },
+  send: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    //
+    // borderColor: '#DDDBE7',
+    // borderLeftWidth: 1,
+    margin: 5,
+  },
+  sendbtn: {
+    color: '#75575f',
+    marginTop: 7,
+    marginLeft: 25,
   }
 });
 
