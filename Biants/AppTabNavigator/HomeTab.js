@@ -147,15 +147,15 @@ export default class HomeTab extends React.Component {
                     </View>
                     <TouchableOpacity onPress={() => {this.setState({receiver: word.id}); this.showDialog();}}>
                       <View style={style.send}>
-                      <Icon style={style.sendbtn} name='mail'/>
+                        <Icon style={style.sendbtn} name='mail'/>
                       </View>
                     </TouchableOpacity>
                   </View>
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 보내기</Dialog.Title>
-                    <Dialog.Input style={style.message} name="message" value={this.state.message} onChangeText={(text) => this.setState({message: text})} placeholder="내용을 입력하세요" maxLength={120}></Dialog.Input>
-                    <Dialog.Button label="보내기" onPress={this.handleSubmit}/>
-                    <Dialog.Button label="닫기" onPress={this.handleCancel}/>
+                    <Dialog.Input style={style.message} name="message" value={this.state.message} onChangeText={(text) => this.setState({message: text})} placeholder="내용을 입력하세요" maxLength={80}></Dialog.Input>
+                    <Dialog.Button label="보내기" color='black' onPress={this.handleSubmit}/>
+                    <Dialog.Button label="닫기" color='black' onPress={this.handleCancel}/>
                   </Dialog.Container>
                 </View>
               );
@@ -212,17 +212,13 @@ const style = StyleSheet.create({
   },
   send: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    //
-    // borderColor: '#DDDBE7',
-    // borderLeftWidth: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
     margin: 5,
   },
   sendbtn: {
     color: '#75575f',
-    marginTop: 7,
-    marginLeft: 25,
+    marginLeft: 18,
   }
 });
 
