@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Platform, Image, Button } from 'react-native';
 import { Icon } from 'native-base';
-import { createBottomTabNavigator, createAppContainer, createStackNavigator, StackActions, NavigationActions } from 'react-navigation';
+import { createBottomTabNavigator, createAppContainer, createStackNavigator, StackActions } from 'react-navigation';
 import HomeTab from './AppTabNavigator/HomeTab';
 import MessageTab from './AppTabNavigator/MessageTab';
 import ProfileTab from './AppTabNavigator/ProfileTab';
@@ -10,39 +10,40 @@ import ChatTab from './AppTabNavigator/ChatTab';
 import Login from './AppTabNavigator/Login';
 
 const AppTabNavigator = createBottomTabNavigator({
-  HomeTab: {
-    screen: HomeTab,
-  },
-  Board: {
-    screen: Board
-  },
-  MessageTab: {
-    screen: MessageTab,
+  HomeTab: { screen: HomeTab,
+    navigationOptions: {
+        title: '',
+        tabBarIcon: ({ tintColor }) => (
+            <Icon name='ios-home' style={{ color: '#BDBDBD' }} />
+            // //<Image source={require('../com.jpg')}/>
+        )
+    }
+ },
+  MessageTab: { screen: MessageTab,
+    navigationOptions: {
+        title: '',
+          tabBarIcon: ({ tintColor }) => (
+              <Icon name='ios-paper' style={{ color: '#BDBDBD' }} />
+          )
+      }
    },
   ProfileTab: {
-     screen: ProfileTab }
+     screen: Platform.OS === 'android' ? Login : ProfileTab }
 });
 
-export default createAppContainer(AppTabNavigator);
+const AppTabContainet = createAppContainer(AppTabNavigator);
 
-class MainScreen extends Component {
+export default class MainScreen extends Component {
 
   static navigationOptions = {
-    headerTitle: (
-        <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
-            <Image
-                source={require('./AppTabNavigator/img/cukcoo_logo.png')}
-                style={{width:170, height:45}}
-            />
-        </View>
-    )
+    title: 'CUCKOO',
     //headerLeft: <Image source={require('./MainLogo.png')} style={{width:200, height:40}}/>
     //headerRight: <Text style={{ paddingRight:10, fontFamily: Fonts.koverwatch }}>테스트</Text>,
   }
 
   render() {
-    return  (
-      <View style={style.container}>
+    return <AppTabContainet/>; (
+      <View style={styles.container}>
         <Text>main</Text>
       </View>
     );

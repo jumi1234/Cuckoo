@@ -37,7 +37,7 @@ AsyncStorage.getAllKeys((err, keys) => {
 const AppStackNavigator = createStackNavigator({
 
   Main:{
-     screen: loginState ? MainScreen : Login,
+     screen: loginState ? Login : Login,
      navigationOptions: {
 
 headerTitle: (
