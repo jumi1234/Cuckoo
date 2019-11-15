@@ -183,20 +183,20 @@ handleSubmit = () => {
 
 render(){
     return(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={style.container}>
       <Textarea
           name="word"
           value={this.state.word}
           containerStyle={style.textareaContainer}
           style={style.textarea}
-          maxLength={120}
+          maxLength={70}
           placeholder={'내용을 입력하세요'}
           placeholderTextColor={'#c7c7c7'}
           underlineColorAndroid={'transparent'}
           onChangeText={(text) => this.setState({word: text})}
           />
-        <View style={{padding: 20}}>
-          <Button title="등록" color="black" onPress={this.handleSubmit} style={{padding: 10}}/>
+        <View style={style.btn}>
+          <Button title="등록" color="#F15382" onPress={this.handleSubmit} style={{padding: 10}}/>
         </View>
       </View>
     )
@@ -206,20 +206,28 @@ render(){
 
 const style = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderTopWidth: 12,
+      borderRightWidth: 12,
+      borderLeftWidth: 12,
+      borderBottomWidth: 12,
+      borderColor: '#efefef',
     },
     textareaContainer: {
-        height: 180,
-        padding: 0,
-        backgroundColor: '#F5FCFF',
+      height: '70%',
+      padding: 0,
+      backgroundColor: '#FFFFFF',
     },
     textarea: {
-        alignItems: 'flex-start',  // hack android
-        height: 180,
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: '#333',
+      height: 180,
+      fontSize: 15,
+      fontWeight: 'bold',
+      textAlign: 'center'
+    },
+    btn: {
+      padding: 20,
+      width: '90%',
     },
 });
