@@ -59,6 +59,15 @@ export default class HomeTab extends React.Component {
 
     componentDidMount() {
     this._get();
+    firebase.firestore().collection("users").where('email', '==', firebase.auth().currentUser.email)
+      .get()
+      .then(querySnapshot => {
+        const data = querySnapshot.docs.map(doc => doc.data());
+            this.setState({myage: data[0].age});
+            this.setState({myregion: data[0].region});
+            this.setState({mygender: data[0].gender});
+      });
+      console.log(this.state.myage);
     }
 
     state = {
@@ -117,7 +126,12 @@ export default class HomeTab extends React.Component {
         dateTime: dateTime,
         id: dateTime,
         talker: [this.state.receiver, firebase.auth().currentUser.email],
+        yourInfo: [this.state.age, this.state.region, this.state.gender],
+        myInfo: [this.state.myage, this.state.myregion, this.state.mygender],
       });
+
+
+
   }
 
     this.props.navigation.dispatch(StackActions.reset({
@@ -145,7 +159,7 @@ export default class HomeTab extends React.Component {
                       <Text style={style.data}>[{word.region}/{word.age}세]</Text>
                       <Text style={style.word}>{word.word}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => {this.setState({receiver: word.id}); this.showDialog();}}>
+                    <TouchableOpacity onPress={() => {this.setState({receiver: word.id, age: word.age, region: word.region, gender: word.gender}); this.showDialog();}}>
                       <View style={style.send}>
                         <Icon style={style.sendbtn} name='mail'/>
                       </View>
