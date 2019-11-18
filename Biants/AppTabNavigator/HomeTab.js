@@ -67,7 +67,6 @@ export default class HomeTab extends React.Component {
             this.setState({myregion: data[0].region});
             this.setState({mygender: data[0].gender});
       });
-      console.log(this.state.myage);
     }
 
     state = {
@@ -117,6 +116,9 @@ export default class HomeTab extends React.Component {
         dateTime: dateTime,
         id: dateTime,
         talker: [this.state.receiver, firebase.auth().currentUser.email],
+        check: firebase.auth().currentUser.email,
+        yourInfo: [this.state.age, this.state.region, this.state.gender],
+        myInfo: [this.state.myage, this.state.myregion, this.state.mygender],
       });
 
       firebase.firestore().collection('messages').doc(dateTime.toString()).collection(dateTime.toString()).add({
@@ -126,11 +128,9 @@ export default class HomeTab extends React.Component {
         dateTime: dateTime,
         id: dateTime,
         talker: [this.state.receiver, firebase.auth().currentUser.email],
-        yourInfo: [this.state.age, this.state.region, this.state.gender],
-        myInfo: [this.state.myage, this.state.myregion, this.state.mygender],
+        // yourInfo: [this.state.age, this.state.region, this.state.gender],
+        // myInfo: [this.state.myage, this.state.myregion, this.state.mygender],
       });
-
-
 
   }
 
@@ -152,7 +152,7 @@ export default class HomeTab extends React.Component {
                 <View style={style.list} key={id}>
                   <View style={style.line}>
                     <Image
-                        source={ word.gender == '남자' ? require('./img/male.jpg') : require('./img/female.jpg') }
+                        source={ word.gender == '남자' ? require('./img/male.png') : require('./img/female.png') }
                         style={style.genderImg}
                     />
                     <View style={style.info}>

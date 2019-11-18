@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
 import Dialog from "react-native-dialog";
 import {Icon} from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
@@ -36,6 +36,7 @@ export default class MessageTab extends React.Component {
     this.state = {
     messages: {},
     keys: {},
+    info: {},
     };
     }
 
@@ -50,9 +51,10 @@ export default class MessageTab extends React.Component {
                 const data = doc.data();
                 //console.log(doc.id);
             this.setState({keys:doc.id});
-            console.log(this.state.keys);
+            //console.log(this.state.keys);
             });
         });
+
     }
 
     componentDidMount() {
@@ -88,41 +90,67 @@ export default class MessageTab extends React.Component {
     render() {
       return (
         <View style={style.container}>
-          <View>
+          <ScrollView>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
               const key = this.state.keys;
-              var dd;
+              var age;
+              var region;
+              var gender;
+
+              if(message.check == firebase.auth().currentUser.email) {
+                age = message.yourInfo[0];
+                region = message.yourInfo[1];
+                gender = message.yourInfo[2];
+              } else {
+                age = message.myInfo[0];
+                region = message.myInfo[1];
+                gender = message.myInfo[2];
+              }
+
               var swipeoutBtns = [
                 {
                   text: '삭제',
                   onPress: () => [id = message.id, this.handleDelete(id)]
                 }
               ]
-
               return (
                 <Swipeout right={swipeoutBtns} style={style.swipeout} key={id}>
+
                 <View style={style.list}>
+                  <View style={style.line}>
+                  <Image
+                      source={ gender == '남자' ? require('./img/male.png') : require('./img/female.png') }
+                      style={style.genderImg}
+                  />
                   <TouchableOpacity onPress={() => {this.props.navigation.dispatch(StackActions.push({
-                  routeName: 'ChatTab',
-                    params: {
-                      collectionId: message.id,
-                      replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver
-                    },
-                  }))} }>
-                    <Text style={style.data}>{message.message}</Text>
+                    routeName: 'ChatTab',
+                      params: {
+                        collectionId: message.id,
+                        replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver
+                      },
+                    }))} }>
+                    <View style={style.info}>
+                      <Text style={style.data}>[{region}/{age}세]</Text>
+                      <Text style={style.message}>{message.message}</Text>
+                    </View>
                   </TouchableOpacity>
+                  </View>
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 삭제하기</Dialog.Title>
                     <Dialog.Description>삭제하시겠습니까?</Dialog.Description>
                     <Dialog.Button label="네" onPress={() => this.handleDelete(key)}/>
                     <Dialog.Button label="아니오" onPress={this.handleCancel}/>
                   </Dialog.Container>
+                  <Text style={style.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
                 </View>
+
                 </Swipeout>
               );
+              this.setState({info: ''});
             })}
-          </View>
+
+          </ScrollView>
         </View>
       )
     }
@@ -132,6 +160,7 @@ const style = StyleSheet.create({
     container: {
       flex:1,
       flexDirection: 'column',
+      backgroundColor: '#efefef',
     },
     head: {
     flex:0.1,
@@ -144,28 +173,43 @@ const style = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderColor:'#eee',
-    borderBottomWidth:0.3,
-    padding: 5,
+    borderColor:'#FFFFFF',
+    borderBottomWidth:1,
+    padding: 10,
+  },
+  line: {
+    flex: 10,
+    flexDirection: 'row',
+    margin: 15,
+  },
+  genderImg: {
+    width: 52,
+    height: 52,
+    justifyContent: 'center',
+    backgroundColor: '#efefef',
+  },
+  info: {
+    flex: 2,
+    flexDirection: 'column',
   },
   data: {
-    fontSize: 20
+    marginLeft: 15,
+    fontSize: 19,
   },
   message: {
+    flex: 1,
+    flexDirection: 'row',
+    marginLeft: 15,
     width: 350,
   },
+  time: {
+    flex: 1,
+    flexDirection: 'row',
+    fontSize: 12,
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+  },
   swipeout: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#efefef',
   }
 });
-
-// const App = createStackNavigator({
-//   MessageTab,
-//   ChatTab
-// }, {
-//   initialRouteName: 'MessageTab',
-//   title: ''
-// }
-// );
-
-// export default createAppContainer(App);
