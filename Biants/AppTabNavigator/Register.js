@@ -43,36 +43,60 @@ export default class Register extends React.Component {
     })
   }
 
+
   handleSignUp = () => {
-    const user = {
-    email: this.state.email,
-    password: this.state.password,
-    age: this.state.age,
-    region: this.state.region,
-    gender: this.state.gender
-    }
 
-    let result = 0;
+    firebase.firestore().collection('users').where('email', '==', this.state.email)
+    .get()
+    .then(querySnapshot => {
+      const data = querySnapshot.docs.map(doc => doc.data());
+          if(data) {
+            this.setState({issignup: 2});
+            console.log(this.state.issignup);
+          }
+    });
 
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(() =>
-        result = 1, this.props.navigation.navigate('Login'))
-      .catch(error => this.setState({ errorMessage: error.message }))
+    if( !this.state.email || !this.state.password || !this.state.age || !this.state.region || !this.state.gender ) {
+      alert('정보를 입력하세요');
+    } else {
 
 
-    if(result = 1) {
-    firebase.firestore().collection('users').add({
-      email: this.state.email,
-      password: this.state.password,
-      age: this.state.age,
-      region: this.state.region,
-      gender: this.state.gender
-    })
+      if( this.state.issignup == 2) {
+        alert('중복된 이메일입니다');
+      } else {
+        const user = {
+        email: this.state.email,
+        password: this.state.password,
+        age: this.state.age,
+        region: this.state.region,
+        gender: this.state.gender
+        }
+
+        let result = 0;
+
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(this.state.email, this.state.password)
+          .then(() =>
+            result = 1, this.props.navigation.navigate('Login'))
+          .catch(error => this.setState({ errorMessage: error.message }))
+
+
+        if(result = 1) {
+        firebase.firestore().collection('users').add({
+          email: this.state.email,
+          password: this.state.password,
+          age: this.state.age,
+          region: this.state.region,
+          gender: this.state.gender
+        })
+
+
   }
-
+}
+}
     }
+
 render() {
     return (
       <View style={styles.container}>
