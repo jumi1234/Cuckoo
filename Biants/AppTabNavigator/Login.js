@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, TextInput, Image, View, Button, AsyncStorage, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import { SwitchNavigator, NavigationActions,StackActions } from 'react-navigation';
+import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { Icon } from 'native-base';
 import firebase from '../src/config';
 import Register from './Register';
@@ -8,9 +8,12 @@ import MainScreen from '../MainScreen';
 
 export default class Login extends React.Component {
 
-   // static navigationOptions = {
-   //     title: 'CUCKOO',
-   //   }
+   static navigationOptions = {
+       headerStyle: {
+         backgroundColor: '#f2e0f5',
+         elevation: 0,
+       }
+     }
 
   state = { email: '', password: '', error: ''};
   onLoginPress() {
