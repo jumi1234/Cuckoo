@@ -1,11 +1,27 @@
 import React from 'react'
-import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
+import { StyleSheet, Text, Image, TextInput, View, Button, TouchableOpacity } from 'react-native'
+import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import RNPickerSelect from 'react-native-picker-select';
 import firebase from '../src/config'
 
 const databaseURL = "https://biants-project.firebaseio.com/";
 
 export default class Register extends React.Component {
+
+  static navigationOptions = {
+      headerTitle: (
+          <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
+              <Image
+                  source={require('./img/cuckoo_logo2.png')}
+                  style={{width:102, height:35}}
+              />
+          </View>
+      ),
+      headerStyle: {
+        backgroundColor: '#8c378b',
+        elevation: 0,
+      }
+    }
 
   state = { email: '', password: '', age: '', region : '', gender: '', errorMessage: null }
 
@@ -60,77 +76,99 @@ export default class Register extends React.Component {
 render() {
     return (
       <View style={styles.container}>
-        <Text>Sign Up</Text>
         {this.state.errorMessage &&
           <Text style={{ color: 'red' }}>
             {this.state.errorMessage}
           </Text>}
-        <TextInput
-          placeholder="이메일"
-          autoCapitalize="none"
-          style={styles.textInput}
-          onChangeText={email => this.setState({ email })}
-          value={this.state.email}
-        />
-        <TextInput
-          secureTextEntry
-          placeholder="비밀번호"
-          autoCapitalize="none"
-          style={styles.textInput}
-          onChangeText={password => this.setState({ password })}
-          value={this.state.password}
-        />
-        <TextInput
-          placeholder="나이"
-          autoCapitalize="none"
-          style={styles.textInput}
-          onChangeText={age => this.setState({ age })}
-          value={this.state.age}
-        />
-        <RNPickerSelect
-          placeholder={{
-            label: '지역',
-            value: '',
-          }}
-          onValueChange={region => this.setState({ region })}
-            items={[
-                { label: '서울', value: '서울' },
-                { label: '경기', value: '경기' },
-                { label: '인천', value: '인천' },
-                { label: '강원', value: '강원' },
-                { label: '충북', value: '충북' },
-                { label: '충남', value: '충남' },
-                { label: '대전', value: '대전' },
-                { label: '전북', value: '전북' },
-                { label: '전남', value: '전남' },
-                { label: '광주', value: '광주' },
-                { label: '울산', value: '울산' },
-                { label: '대구', value: '대구' },
-                { label: '경북', value: '경북' },
-                { label: '경남', value: '경남' },
-                { label: '부산', value: '부산' },
-                { label: '제주', value: '제주' },
-            ]}
-            value={this.state.region}
 
-        />
-        <RNPickerSelect
-          placeholder={{
-            label: '성별',
-            value: '',
-          }}
-          onValueChange={gender => this.setState({ gender })}
-            items={[
-                { label: '여자', value: '여자' },
-                { label: '남자', value: '남자' },
-            ]}
-            value={this.state.gender}
-        />
-        <Button title="Sign Up" onPress={this.handleSignUp} />
-        <Button
-          title="Already have an account? Login"
-          onPress={() => this.props.navigation.goBack(null)}
-        />
+        <View style={styles.inputContainer} behavior="padding" enabled>
+          <TextInput
+            placeholder=" 이메일"
+            autoCapitalize="none"
+            style={styles.textInput}
+            onChangeText={email => this.setState({ email })}
+            value={this.state.email}
+          />
+          <TextInput
+            secureTextEntry
+            placeholder=" 비밀번호"
+            autoCapitalize="none"
+            style={styles.textInput}
+            onChangeText={password => this.setState({ password })}
+            value={this.state.password}
+          />
+          <TextInput
+            placeholder=" 나이"
+            autoCapitalize="none"
+            style={styles.textInput}
+            onChangeText={age => this.setState({ age })}
+            value={this.state.age}
+          />
+          <View style={styles.select}>
+            <RNPickerSelect
+              placeholder={{
+                label: ' 지역',
+                value: '',
+              }}
+              onValueChange={region => this.setState({ region })}
+                items={[
+                    { label: '서울', value: '서울' },
+                    { label: '경기', value: '경기' },
+                    { label: '인천', value: '인천' },
+                    { label: '강원', value: '강원' },
+                    { label: '충북', value: '충북' },
+                    { label: '충남', value: '충남' },
+                    { label: '대전', value: '대전' },
+                    { label: '전북', value: '전북' },
+                    { label: '전남', value: '전남' },
+                    { label: '광주', value: '광주' },
+                    { label: '울산', value: '울산' },
+                    { label: '대구', value: '대구' },
+                    { label: '경북', value: '경북' },
+                    { label: '경남', value: '경남' },
+                    { label: '부산', value: '부산' },
+                    { label: '제주', value: '제주' },
+                ]}
+                value={this.state.region}
+                style={styles.select}
+            />
+          </View>
+          <View style={styles.select}>
+            <RNPickerSelect
+              placeholder={{
+                label: ' 성별',
+                value: '',
+              }}
+              onValueChange={gender => this.setState({ gender })}
+                items={[
+                    { label: '여자', value: '여자' },
+                    { label: '남자', value: '남자' },
+                ]}
+                value={this.state.gender}
+            />
+          </View>
+          <View style={styles.imgcontainer}>
+            <Image
+                source={require('./img/heart.png')}
+                style={styles.heart}
+            />
+          </View>
+          <View style={styles.btnContainer}>
+            <Button title="가입하기" style={{width:'90%', height:150}} color='#8c378b' onPress={this.handleSignUp} />
+          </View>
+          <View style={styles.signinContainer}>
+            <Text style={styles.signinText}>이미 가입하셨나요?</Text>
+            <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
+                  index: 0,
+                  key: null,
+                  actions: [NavigationActions.navigate({ routeName: 'Login'})],
+              }))}>
+              <Text style={styles.signin}> 로그인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+
       </View>
     )
   }
@@ -139,13 +177,79 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#f2e0f5',
+  },
+  inputContainer: {
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    width: '95%',
+    height: '95%',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#8c378b',
+  },
+  input: {
+    flex: 1,
+    flexDirection: 'row',
+    borderColor:'#8c378b',
+    width:350,
+    height: '100%',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    fontSize:15,
+    borderRadius: 25,
+    margin: 10,
   },
   textInput: {
-    height: 40,
-    width: '90%',
-    borderColor: 'gray',
     borderWidth: 1,
-    marginTop: 8
+    borderStyle: 'solid',
+    borderColor: '#8c378b',
+    fontSize:15,
+    borderRadius: 25,
+    margin: 10,
+    color: '#8c378b'
   },
+  select: {
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#8c378b',
+    fontSize:15,
+    borderRadius: 25,
+    margin: 10,
+  },
+  imgcontainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 60,
+  },
+  heart: {
+    width: 28,
+    height: 24,
+    alignSelf: 'center',
+  },
+  btnContainer: {
+    flex:1,
+    marginTop: 15,
+  },
+  signinContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  signinText: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#8c378b',
+  },
+  signin: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#8c378b',
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+  }
 })
