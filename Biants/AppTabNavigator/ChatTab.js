@@ -150,7 +150,7 @@ this.props.navigation.goBack();
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
-                    <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
+                    <View style={message.sender == email ? styles.balloonofme : styles.balloon}>
                       <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
                     </View>
                 </View>
@@ -270,14 +270,14 @@ var styles = StyleSheet.create({
     color: 'black',
     fontSize: 13,
   },
-  ballonofme: {
+  balloonofme: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     padding: 15,
   },
-  ballon: {
+  balloon: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
