@@ -186,7 +186,9 @@ this.props.navigation.goBack();
                 <View style={styles.chatContainer} key={id}>
                   <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
                   <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
+                    <Text style={message.sender == email ? styles.timeofme : styles.none }>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
                     <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
+                    <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
                   </View>
                 </View>
               );
@@ -224,6 +226,7 @@ var styles = StyleSheet.create({
   },
   chatContainer: {
     flex: 11,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'stretch',
     margin: 10,
@@ -252,36 +255,51 @@ var styles = StyleSheet.create({
   infoofme: {
     display: 'none',
   },
+  time: {
+    marginTop: 15,
+    marginLeft: 5,
+  },
+  timeofme: {
+    marginTop: 4,
+    marginRight: 5,
+  },
+  none: {
+    display: 'none',
+  },
   info: {
     color: 'black',
     fontSize: 13,
   },
   ballonofme: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'flex-end',
+    justifyContent: 'flex-end',
     padding: 15,
   },
   ballon: {
+    flex: 1,
+    flexDirection: 'row',
     alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     padding: 5,
   },
   replyofme: {
-    flex: 1,
     justifyContent: 'center',
     backgroundColor: '#e7c1ec',
     borderColor: '#e7c1ec',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 10,
     borderStyle: 'solid',
     fontSize: 14,
     padding: 10,
   },
   reply: {
-    flex: 1,
     justifyContent: 'center',
     backgroundColor: 'white',
     borderColor: '#ffffff',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 10,
     borderStyle: 'solid',
     fontSize: 14,
     padding: 10,
