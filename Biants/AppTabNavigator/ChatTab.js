@@ -168,6 +168,7 @@ this.props.navigation.goBack();
               <TextInput
               style={styles.input}
               value={this.state.reply}
+              maxLength={70}
               onChangeText={(text) => this.setState({reply: text})}/>
             </View>
             <View style={styles.sendContainer}>

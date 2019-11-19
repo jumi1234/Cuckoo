@@ -45,6 +45,12 @@ export default class Login extends React.Component {
   render() {
       return (
           <View style={styles.container}>
+            <View style={styles.logocontainer}>
+              <Image
+                  source={require('./img/cuckoo_logo.png')}
+                  style={styles.logo}
+              />
+            </View>
             <View style={styles.inputContainer} behavior="padding" enabled>
               <View style={styles.input}>
                   <Icon style={styles.icon} name='mail'/>
@@ -66,17 +72,21 @@ export default class Login extends React.Component {
                       onChangeText={password => this.setState({ password })}
                   />
               </View>
-                  <Text style={styles.errorTextStyle}>{this.state.error}</Text>
-
-                  <Button style={{width:'100%', height:150}} color='#F15382' onPress={this.onLoginPress.bind(this)} title="시작하기"/>
+              <View style={styles.btnContainer}>
+                <Button style={{width:'100%', height:150}} color='#8c378b' onPress={this.onLoginPress.bind(this)} title="시작하기"/>
+                <Text style={styles.errorTextStyle}>{this.state.error}</Text>
+              </View>
             </View>
-
-                  <View style={styles.signupContainer}>
-                    <Text style={styles.signupText}>계정이 없으신가요?</Text>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
-                      <Text style={styles.signup}> 계정 만들기</Text>
-                    </TouchableOpacity>
-                  </View>
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>계정이 없으신가요?</Text>
+              <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [NavigationActions.navigate({ routeName: 'Register'})],
+                }))}>
+                <Text style={styles.signup}> 계정 만들기</Text>
+              </TouchableOpacity>
+            </View>
           </View>
       );
   }
@@ -84,7 +94,7 @@ export default class Login extends React.Component {
 
   const styles = {
       errorTextStyle: {
-          color: '#E64A19',
+          color: '#cda8d2',
           alignSelf: 'center',
           paddingTop: 10,
           paddingBottom: 10
@@ -96,26 +106,38 @@ export default class Login extends React.Component {
         alignItems: 'center',
         //backgroundColor: '#DDDBE7',
       },
+      logocontainer: {
+        position: 'relative',
+        top: 0,
+        flex: 0.6,
+        backgroundColor: '#f2e0f5',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
       logo: {
-        marginLeft: 50,
-        marginRight: 50,
-        marginTop: 0,
+        width: 136,
+        height: 105,
       },
       inputContainer: {
         position: 'absolute',
+        top: '40%',
         flex: 1,
         flexDirection: 'column',
-        marginTop: 150,
+        // borderTopWidth: 0,
+        // borderBottomWidth: 1,
+        // borderBottomLeftRadius: 24,
+        // borderBottomRightRadius: 24,
+        // borderColor: '#f2e0f5',
       },
       icon: {
         marginTop: 10,
         marginLeft: 15,
-        color: '#DDDBE7'
+        color: '#8c378b'
       },
       btnContainer: {
-        flex: 1,
-        marginTop: 100,
-        width: '80%',
+        flex:1,
+        marginTop: 10,
       },
       textInput: {
         height: 40,
@@ -127,7 +149,7 @@ export default class Login extends React.Component {
       input: {
         flex: 1,
         flexDirection: 'row',
-        borderColor:'#DDDBE7',
+        borderColor:'#8c378b',
         width:350,
         height: '100%',
         borderWidth: 1,
