@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, 
 import { Icon } from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
 import Textarea from 'react-native-textarea';
+import Hr from "react-native-hr-component";
 import firebase from '../src/config';
 
 const databaseURL = "https://biants-project.firebaseio.com/";
@@ -150,9 +151,13 @@ this.props.navigation.goBack();
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
-                    <View style={message.sender == email ? styles.balloonofme : styles.balloon}>
+                    <View style={message.sender == email ? styles.chatofme : styles.chat}>
+                      <Text style={message.sender == email ? styles.timeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
                       <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
                     </View>
+                    <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                  </View>
                 </View>
               );
             })}
@@ -184,10 +189,12 @@ this.props.navigation.goBack();
               const message = this.state.messages[id];
               return (
                 <View style={styles.chatContainer} key={id}>
-                  <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
-                  <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
-                    <Text style={message.sender == email ? styles.timeofme : styles.none }>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
+                    <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
+                    <View style={message.sender == email ? styles.chatofme : styles.chat}>
+                      <Text style={message.sender == email ? styles.timeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
+                      <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
+                    </View>
                     <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
                   </View>
                 </View>
@@ -227,9 +234,21 @@ var styles = StyleSheet.create({
   chatContainer: {
     flex: 11,
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'stretch',
     margin: 10,
+  },
+  chatofme: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    padding: 5,
+  },
+  chat: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    padding: 5,
   },
   inputContainer: {
     flex: 1,
@@ -256,7 +275,7 @@ var styles = StyleSheet.create({
     display: 'none',
   },
   time: {
-    marginTop: 15,
+    marginTop: 18,
     marginLeft: 5,
   },
   timeofme: {
