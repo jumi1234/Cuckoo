@@ -36,7 +36,6 @@ export default class MessageTab extends React.Component {
     this.state = {
     messages: {},
     keys: {},
-    info: {},
     };
     }
 
@@ -111,7 +110,8 @@ export default class MessageTab extends React.Component {
               var swipeoutBtns = [
                 {
                   text: '삭제',
-                  onPress: () => [id = message.id, this.handleDelete(id)]
+                  onPress: () => [id = message.id, this.handleDelete(id)],
+                  backgroundColor: '#f2e0f5',
                 }
               ]
               return (
@@ -119,22 +119,37 @@ export default class MessageTab extends React.Component {
 
                 <View style={style.list}>
                   <View style={style.line}>
-                  <Image
-                      source={ gender == '남자' ? require('./img/male.png') : require('./img/female.png') }
-                      style={style.genderImg}
-                  />
-                  <TouchableOpacity onPress={() => {this.props.navigation.dispatch(StackActions.push({
-                    routeName: 'ChatTab',
-                      params: {
-                        collectionId: message.id,
-                        replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver
-                      },
-                    }))} }>
-                    <View style={style.info}>
-                      <Text style={style.data}>[{region}/{age}세]</Text>
-                      <Text style={style.message}>{message.message}</Text>
+                    <View style={{flex:0.2}}>
+                    <Image
+                        source={ gender == '남자' ? require('./img/male.png') : require('./img/female.png') }
+                        style={style.genderImg}
+                    />
                     </View>
-                  </TouchableOpacity>
+                    <View style={{flex:0.7}}>
+                    <TouchableOpacity onPress={() => {this.props.navigation.dispatch(StackActions.push({
+                      routeName: 'ChatTab',
+                        params: {
+                          collectionId: message.id,
+                          replyReceiver: message.sender != firebase.auth().currentUser.email ? message.sender : message.receiver,
+                          age: age,
+                          region: region,
+                          check: message.check,
+                          yourInfo: message.yourInfo,
+                          myInfo: message.myInfo
+                        },
+                      }))} }>
+                      <View style={style.info}>
+                        <Text style={style.data}>[{region}/{age}세]</Text>
+                        <Text style={style.message}>{message.message}</Text>
+                      </View>
+                    </TouchableOpacity>
+                    </View>
+                    <View style={style.heart}>
+                      <Image
+                          source={require('./img/pkheart.png') }
+                          style={style.heartimg}
+                      />
+                    </View>
                   </View>
                   <Dialog.Container visible={this.state.dialogVisible}>
                     <Dialog.Title>쪽지 삭제하기</Dialog.Title>
@@ -147,7 +162,6 @@ export default class MessageTab extends React.Component {
 
                 </Swipeout>
               );
-              this.setState({info: ''});
             })}
 
           </ScrollView>
@@ -157,36 +171,39 @@ export default class MessageTab extends React.Component {
 }
 
 const style = StyleSheet.create({
-    container: {
-      flex:1,
-      flexDirection: 'column',
-      backgroundColor: '#efefef',
-    },
-    head: {
-    flex:0.1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor:'#D9E5FF',
+  container: {
+    flex:1,
+    flexDirection: 'column',
+    backgroundColor: '#f2e0f5',
+  },
+  head: {
+  flex:0.1,
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor:'#D9E5FF',
   },
   list: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderColor:'#FFFFFF',
     borderBottomWidth:1,
-    padding: 10,
+    padding: 5,
+    backgroundColor: '#FFFFFF',
   },
   line: {
-    flex: 10,
+    flex: 0.9,
     flexDirection: 'row',
     margin: 15,
+    borderColor: '#f2e0f5',
+    borderRightWidth: 1,
   },
   genderImg: {
     width: 52,
     height: 52,
     justifyContent: 'center',
-    backgroundColor: '#efefef',
   },
   info: {
     flex: 2,
@@ -202,14 +219,26 @@ const style = StyleSheet.create({
     marginLeft: 15,
     width: 350,
   },
+  heart: {
+    flex:0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  heartimg: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 15,
+    height: 13,
+  },
   time: {
-    flex: 1,
+    flex: 0.1,
     flexDirection: 'row',
     fontSize: 12,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
   },
   swipeout: {
-    backgroundColor: '#efefef',
   }
 });
