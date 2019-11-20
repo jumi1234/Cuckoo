@@ -128,8 +128,6 @@ export default class HomeTab extends React.Component {
         dateTime: dateTime,
         id: dateTime,
         talker: [this.state.receiver, firebase.auth().currentUser.email],
-        // yourInfo: [this.state.age, this.state.region, this.state.gender],
-        // myInfo: [this.state.myage, this.state.myregion, this.state.mygender],
       });
 
   }
@@ -159,9 +157,18 @@ export default class HomeTab extends React.Component {
                       <Text style={style.data}>[{word.region}/{word.age}세]</Text>
                       <Text style={style.word}>{word.word}</Text>
                     </View>
+                    <View style={style.heart}>
+                      <Image
+                          source={require('./img/pkheart.png') }
+                          style={style.heartimg}
+                      />
+                    </View>
                     <TouchableOpacity onPress={() => {this.setState({receiver: word.id, age: word.age, region: word.region, gender: word.gender}); this.showDialog();}}>
                       <View style={style.send}>
-                        <Icon style={style.sendbtn} name='mail'/>
+                        <Image
+                            source={require('./img/balloon.png') }
+                            style={style.sendbtn}
+                        />
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -185,8 +192,8 @@ const style = StyleSheet.create({
   container: {
     flex:1,
     flexDirection: 'column',
-    borderTopWidth: 12,
-    borderColor: '#efefef',
+    borderTopWidth: 10,
+    borderColor: '#f2e0f5',
   },
   list: {
     flex: 1,
@@ -194,7 +201,7 @@ const style = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     borderColor: '#efefef',
-    borderBottomWidth: 6,
+    borderBottomWidth: 1,
     padding: 5,
   },
   line: {
@@ -210,8 +217,6 @@ const style = StyleSheet.create({
   info: {
     flex: 2,
     flexDirection: 'column',
-    borderColor: '#efefef',
-    borderRightWidth: 1,
   },
   data: {
     marginLeft: 15,
@@ -223,6 +228,20 @@ const style = StyleSheet.create({
   },
   message: {
     width: 350,
+  },
+  heart: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 5,
+    borderColor: '#f2e0f5',
+    borderRightWidth: 1,
+  },
+  heartimg: {
+    marginLeft: 18,
+    width: 15,
+    height: 13,
   },
   send: {
     flex: 1,
