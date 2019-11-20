@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, TextInput, Image, View, Button, AsyncStorage, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { Icon } from 'native-base';
+import { Fonts } from '../src/Fonts';
 import firebase from '../src/config';
 import Register from './Register';
 import MainScreen from '../MainScreen';
@@ -171,6 +172,7 @@ export default class Login extends React.Component {
       },
       signupText: {
         color: 'gray',
+        fontFamily: Fonts.PFStardust,
       },
       signup: {
         color: 'gray',
