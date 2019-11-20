@@ -212,12 +212,14 @@ const style = StyleSheet.create({
   data: {
     marginLeft: 15,
     fontSize: 19,
+    fontFamily: 'PFStardust',
   },
   message: {
     flex: 1,
     flexDirection: 'row',
     marginLeft: 15,
     width: 350,
+    fontFamily: 'PFStardust',
   },
   heart: {
     flex:0.1,
@@ -238,6 +240,7 @@ const style = StyleSheet.create({
     fontSize: 12,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
+    fontFamily: 'PFStardust',
   },
   swipeout: {
   }

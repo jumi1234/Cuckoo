@@ -221,10 +221,12 @@ const style = StyleSheet.create({
   data: {
     marginLeft: 15,
     fontSize: 19,
+    fontFamily: 'PFStardust',
   },
   word: {
     marginLeft: 15,
-    fontSize: 17
+    fontSize: 17,
+    fontFamily: 'PFStardust',
   },
   message: {
     width: 350,

@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     color: '#8c378b',
+    fontFamily: 'PFStardust',
   },
   signin: {
     justifyContent: 'center',
@@ -275,5 +276,6 @@ const styles = StyleSheet.create({
     color: '#8c378b',
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
+    fontFamily: 'PFStardust',
   }
 })

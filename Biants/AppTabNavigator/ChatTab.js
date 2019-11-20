@@ -285,16 +285,19 @@ var styles = StyleSheet.create({
   },
   infoofme: {
     display: 'none',
+    fontFamily: 'PFStardust',
   },
   time: {
     marginTop: 18,
     marginLeft: 5,
     color: 'gray',
+    fontFamily: 'PFStardust',
   },
   timeofme: {
     marginTop: 4,
     marginRight: 5,
     color: 'gray',
+    fontFamily: 'PFStardust',
   },
   none: {
     display: 'none',
@@ -302,6 +305,7 @@ var styles = StyleSheet.create({
   info: {
     color: 'black',
     fontSize: 13,
+    fontFamily: 'PFStardust'
   },
   balloonofme: {
     flex: 1,
@@ -326,6 +330,7 @@ var styles = StyleSheet.create({
     borderStyle: 'solid',
     fontSize: 14,
     padding: 10,
+    fontFamily: 'PFStardust',
   },
   reply: {
     justifyContent: 'center',
@@ -336,6 +341,7 @@ var styles = StyleSheet.create({
     borderStyle: 'solid',
     fontSize: 14,
     padding: 10,
+    fontFamily: 'PFStardust',
   },
   sendContainer: {
     flex: 0.1,
@@ -356,7 +362,9 @@ var styles = StyleSheet.create({
     fontSize: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
+    marginRight: 2,
+    fontFamily: 'PFStardust',
   },
   input: {
     color: '#a8a8a8',
@@ -368,13 +376,12 @@ var styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 22,
     borderStyle: 'solid',
-
     width:'95%',
     height: '70%',
     fontSize:15,
-
     alignSelf: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    fontFamily: 'PFStardust',
   },
   scrollview: {
     height: '80%'
@@ -387,7 +394,7 @@ var styles = StyleSheet.create({
   inputin: {
     paddingRight: 10,
     paddingLeft: 10,
-    paddingTop: 5,
+    paddingTop: 8,
     height: 32,
     borderColor: '#efefef',
     borderWidth: 1,
@@ -396,9 +403,9 @@ var styles = StyleSheet.create({
     width:'95%',
     height: '70%',
     fontSize:15,
-
     alignSelf: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    fontFamily: 'PFStardust',
   },
   sendContainerin: {
     flex: 0.1,
@@ -419,7 +426,8 @@ var styles = StyleSheet.create({
     fontSize: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
-    marginLeft: 5,
+    marginBottom: 15,
+    marginRight: 2,
+    fontFamily: 'PFStardust'
   },
 });

@@ -135,21 +135,21 @@ const style = StyleSheet.create({
     // borderColor: '#f2e0f5',
   },
   private: {
-    fontSize: 18
+    fontSize: 18,
+    fontFamily: 'PFStardust',
   },
   email: {
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: 'PFStardust',
   },
   appinfo: {
     flex: 0.5,
     padding: 20,
   },
-  info: {
-
-  },
   title: {
     fontSize: 18,
-    margin: 10,
+    marginBottom: 15,
+    fontFamily: 'PFStardust',
   },
   list: {
     flex: 1,
@@ -160,6 +160,7 @@ const style = StyleSheet.create({
   text: {
     color: 'black',
     fontSize: 15,
+    fontFamily: 'PFStardust',
   },
   haertImg: {
     width: 15,

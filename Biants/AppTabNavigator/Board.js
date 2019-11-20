@@ -254,7 +254,7 @@ render(){
             />
           </View>
           <View style={style.btn}>
-            <Button title="등록" style={{width: 400, height:150}} color="#8c378b" onPress={this.handleSubmit} style={{padding: 10}}/>
+            <Button title="등록" style={{width: 400, height:150}} color="#8c378b" onPress={this.handleSubmit}/>
           </View>
         </View>
       </View>
@@ -297,6 +297,7 @@ const style = StyleSheet.create({
       fontWeight: 'bold',
       textAlign: 'center',
       height: 400,
+      fontFamily: 'PFStardust'
     },
     btn: {
       flex: 1,
