@@ -31,11 +31,11 @@ class MainScreen extends Component {
     headerTitle: (
         <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
             <Image
-                source={require('./AppTabNavigator/img/cukcoo_logo.png')}
+                source={require('./AppTabNavigator/img/cuckoo_logo.png')}
                 style={{width:170, height:45}}
             />
         </View>
-    )
+    ),
     //headerLeft: <Image source={require('./MainLogo.png')} style={{width:200, height:40}}/>
     //headerRight: <Text style={{ paddingRight:10, fontFamily: Fonts.koverwatch }}>테스트</Text>,
   }
