@@ -10,6 +10,14 @@ const databaseURL = "https://biants-project.firebaseio.com/";
 
 export default class ChatTab extends React.Component {
 
+  static navigationOptions = {
+      headerStyle: {
+        backgroundColor: '#E6C0EB',
+        borderBottomWidth: 1,
+        borderColor: '#8c378b',
+      }
+    }
+
   _goHome = () => {
     const popAction = StackActions.pop({
       n: 1,
@@ -49,7 +57,7 @@ export default class ChatTab extends React.Component {
         .then(querySnapshot => {
           if(! querySnapshot.empty) {
             const data = querySnapshot.data();
-            if(data.sender == emailad) {
+            if(data.sender == emailad) {7
               this.setState({isSender: 1});
             }
          }
@@ -148,6 +156,7 @@ this.props.navigation.goBack();
           <View>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
+
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
@@ -173,7 +182,7 @@ this.props.navigation.goBack();
             </View>
             <View style={styles.sendContainer}>
               <TouchableHighlight
-              underlayColor={'#cda8d2'}
+              underlayColor={'#8c378b'}
               onPress={() => this.onSendPress()}>
                 <Text style={styles.sendLabel}>전송</Text>
               </TouchableHighlight>
@@ -222,7 +231,7 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'stretch',
-    backgroundColor: '#efefef'
+    backgroundColor: '#f2e0f5'
   },
   topContainer: {
     flex: 1,
@@ -255,7 +264,9 @@ var styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderColor: '#8c378b',
   },
   textContainer: {
     flex: 0.9,
@@ -278,10 +289,12 @@ var styles = StyleSheet.create({
   time: {
     marginTop: 18,
     marginLeft: 5,
+    color: 'gray',
   },
   timeofme: {
     marginTop: 4,
     marginRight: 5,
+    color: 'gray',
   },
   none: {
     display: 'none',
@@ -306,10 +319,10 @@ var styles = StyleSheet.create({
   },
   replyofme: {
     justifyContent: 'center',
-    backgroundColor: '#e7c1ec',
-    borderColor: '#e7c1ec',
+    backgroundColor: '#E6C0EB',
+    borderColor: '#E6C0EB',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 12,
     borderStyle: 'solid',
     fontSize: 14,
     padding: 10,
@@ -319,7 +332,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: '#ffffff',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 12,
     borderStyle: 'solid',
     fontSize: 14,
     padding: 10,
@@ -330,8 +343,8 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     paddingRight: 10,
-    backgroundColor: '#cda8d2',
-    borderColor: '#cda8d2',
+    backgroundColor: '#8c378b',
+    borderColor: '#8c378b',
     borderWidth: 1,
     borderRadius: 21,
     borderStyle: 'solid',
@@ -344,7 +357,6 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
-    marginLeft: 5,
   },
   input: {
     color: '#a8a8a8',
@@ -352,7 +364,7 @@ var styles = StyleSheet.create({
     paddingLeft: 10,
     paddingTop: 5,
     height: 32,
-    borderColor: '#cda8d2',
+    borderColor: '#8c378b',
     borderWidth: 1,
     borderRadius: 22,
     borderStyle: 'solid',
