@@ -23,13 +23,14 @@ export default class Register extends React.Component {
       }
     }
 
-  state = { email: '', password: '', age: '', region : '', gender: '', errorMessage: null }
+  state = { email: '', password: '', age: '', region : '', gender: '', errorMessage: null,}
 
   constructor() {
   super();
   this.state = {
   users: {},
-  user: {}
+  user: {},
+  issignup: '',
   };
   }
 
@@ -43,27 +44,16 @@ export default class Register extends React.Component {
     })
   }
 
-
   handleSignUp = () => {
 
-    firebase.firestore().collection('users').where('email', '==', this.state.email)
-    .get()
-    .then(querySnapshot => {
-      const data = querySnapshot.docs.map(doc => doc.data());
-          if(data) {
-            this.setState({issignup: 2});
-            console.log(this.state.issignup);
-          }
-    });
 
     if( !this.state.email || !this.state.password || !this.state.age || !this.state.region || !this.state.gender ) {
       alert('정보를 입력하세요');
+    } else if(this.state.password.length < 6) {
+      alert('비밀번호는 6자 이상 입력하세요');
+    } else if( this.state.issignup == 2 ){
+      alert('중복된 이메일입니다');
     } else {
-
-
-      if( this.state.issignup == 2) {
-        alert('중복된 이메일입니다');
-      } else {
         const user = {
         email: this.state.email,
         password: this.state.password,
@@ -72,7 +62,7 @@ export default class Register extends React.Component {
         gender: this.state.gender
         }
 
-        let result = 0;
+        var result = 0;
 
         firebase
           .auth()
@@ -91,13 +81,33 @@ export default class Register extends React.Component {
           gender: this.state.gender
         })
 
+}
 
-  }
 }
 }
+
+
+    doClear() {
+      let textInput = this.refs["emailInput"];
+      textInput.clear();
+
     }
 
 render() {
+  var issignup;
+  if(this.state.email) {
+  firebase.firestore().collection('users').where('email', '==', this.state.email)
+  .get()
+  .then(querySnapshot => {
+    const data = querySnapshot.docs.map(doc => doc.data());
+        if(data.length > 0) {
+          issignup = 2;
+        } else {
+            issignup = 1;
+        }
+        this.setState({issignup: issignup});
+  });
+}
     return (
       <View style={styles.container}>
         {this.state.errorMessage &&
@@ -107,22 +117,23 @@ render() {
 
         <View style={styles.inputContainer} behavior="padding" enabled>
           <TextInput
-            placeholder=" 이메일"
+            placeholder="  이메일"
             autoCapitalize="none"
             style={styles.textInput}
-            onChangeText={email => this.setState({ email })}
+            onChangeText={(email) => this.setState({email: email})}
             value={this.state.email}
+            ref="emailInput"
           />
           <TextInput
             secureTextEntry
-            placeholder=" 비밀번호"
+            placeholder="  비밀번호"
             autoCapitalize="none"
             style={styles.textInput}
             onChangeText={password => this.setState({ password })}
             value={this.state.password}
           />
           <TextInput
-            placeholder=" 나이"
+            placeholder="  나이"
             autoCapitalize="none"
             style={styles.textInput}
             onChangeText={age => this.setState({ age })}
@@ -131,7 +142,7 @@ render() {
           <View style={styles.select}>
             <RNPickerSelect
               placeholder={{
-                label: ' 지역',
+                label: '  지역',
                 value: '',
               }}
               onValueChange={region => this.setState({ region })}
@@ -154,13 +165,12 @@ render() {
                     { label: '제주', value: '제주' },
                 ]}
                 value={this.state.region}
-                style={styles.select}
             />
           </View>
           <View style={styles.select}>
             <RNPickerSelect
               placeholder={{
-                label: ' 성별',
+                label: '  성별',
                 value: '',
               }}
               onValueChange={gender => this.setState({ gender })}
@@ -232,7 +242,8 @@ const styles = StyleSheet.create({
     fontSize:15,
     borderRadius: 25,
     margin: 10,
-    color: '#8c378b'
+    color: '#8c378b',
+    fontFamily: 'PFStardust',
   },
   select: {
     borderWidth: 1,
@@ -241,6 +252,7 @@ const styles = StyleSheet.create({
     fontSize:15,
     borderRadius: 25,
     margin: 10,
+    fontFamily: 'PFStardust',
   },
   imgcontainer: {
     justifyContent: 'center',
