@@ -14,9 +14,12 @@ const databaseURL = "https://biants-project.firebaseio.com/";
 export default class HomeTab extends React.Component {
 
   static navigationOptions = {
-      title: '',
+    title: '',
         tabBarIcon: ({ tintColor }) => (
-            <Icon name='ios-home' style={{ color: '#BDBDBD' }} />
+          <Image
+              source={require('./img/home.png')}
+              style={{width:35, height:37, marginTop: 10,}}
+          />
             // //<Image source={require('../com.jpg')}/>
         )
     }

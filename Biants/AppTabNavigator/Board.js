@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, AsyncStorage, TouchableOpacity } from 'react-native';
 import { Icon } from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
 import Textarea from 'react-native-textarea';
@@ -11,9 +11,12 @@ const databaseURL = "https://biants-project.firebaseio.com/";
 export default class Board extends React.Component {
 
   static navigationOptions = {
-      title: '',
+    title: '',
         tabBarIcon: ({ tintColor }) => (
-            <Icon name='ios-add-circle' style={{ color: '#BDBDBD' }} />
+          <Image
+              source={require('./img/board.png')}
+              style={{width:35, height:37, marginTop: 10,}}
+          />
             // //<Image source={require('../com.jpg')}/>
         )
     }
@@ -253,9 +256,11 @@ render(){
                 onChangeText={(text) => this.setState({word: text})}
             />
           </View>
-          <View style={style.btn}>
-            <Button title="등록" style={{width: 400, height:150}} color="#8c378b" onPress={this.handleSubmit}/>
-          </View>
+          <TouchableOpacity onPress={this.handleSubmit}>
+            <View style={style.btnContainer}>
+              <Text style={style.register}>등록</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     )
@@ -269,10 +274,12 @@ const style = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#f2e0f5',
+      paddingTop: 10,
+      paddingBottom: 10,
     },
     registerContainer: {
+      flex: 1,
       backgroundColor: '#FFFFFF',
-      padding: 10,
       width: '95%',
       height: '95%',
       justifyContent: 'center',
@@ -283,13 +290,11 @@ const style = StyleSheet.create({
     },
     area: {
       flex: 1,
-      flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
       width:'80%',
       height: 500,
       fontSize:15,
-      marginTop: 200,
     },
     textarea: {
       flex: 1,
@@ -297,11 +302,24 @@ const style = StyleSheet.create({
       fontWeight: 'bold',
       textAlign: 'center',
       height: 400,
-      fontFamily: 'PFStardust'
+      fontFamily: 'PFStardust',
+    },
+    btnContainer: {
+      flex:0.25,
+      backgroundColor: '#8c378b',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 340,
+      height: '30%',
     },
     btn: {
       flex: 1,
-      marginTop: 200,
       width: '90%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    register: {
+      color: '#FFFFFF',
+      fontFamily: 'PFStardust',
     },
 });

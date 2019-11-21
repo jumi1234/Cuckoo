@@ -5,15 +5,17 @@ import Hr from "react-native-hr-component";
 import firebase from '../src/config';
 
 export default class ProfileTab extends Component {
-  GetSectionListItem=(item)=>{
-    Alert.alert(item)
-}
+
   static navigationOptions = {
-      title: '',
-        tabBarIcon: ({ tintColor }) => (
-            <Icon name='ios-person' style={{ color: '#BDBDBD' }} />
-        )
-    }
+    title: '',
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+          source={require('./img/profile.png')}
+          style={{width:35, height:37, marginTop: 10,}}
+      />
+        // //<Image source={require('../com.jpg')}/>
+    )
+  }
 
   constructor(props) {
   super(props);
@@ -144,11 +146,12 @@ const style = StyleSheet.create({
   },
   appinfo: {
     flex: 0.5,
-    padding: 20,
+    padding: 35,
   },
   title: {
     fontSize: 18,
     marginBottom: 15,
+    marginLeft: 10,
     fontFamily: 'PFStardust',
   },
   list: {

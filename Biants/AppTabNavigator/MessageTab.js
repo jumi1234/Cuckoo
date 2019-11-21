@@ -15,11 +15,15 @@ const databaseURL = "https://biants-project.firebaseio.com/";
 export default class MessageTab extends React.Component {
 
   static navigationOptions = {
-      title: '',
-        tabBarIcon: ({ tintColor }) => (
-            <Icon name='chatboxes' style={{ color: '#BDBDBD' }} />
-        )
-    }
+    title: '',
+    tabBarIcon: ({ tintColor }) => (
+      <Image
+          source={require('./img/chat.png')}
+          style={{width:35, height:37, marginTop: 10,}}
+      />
+        // //<Image source={require('../com.jpg')}/>
+    )
+  }
 
     _goToChat = () => {
       const pushAction = StackActions.push({

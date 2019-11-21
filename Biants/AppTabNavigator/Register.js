@@ -46,7 +46,6 @@ export default class Register extends React.Component {
 
   handleSignUp = () => {
 
-
     if( !this.state.email || !this.state.password || !this.state.age || !this.state.region || !this.state.gender ) {
       alert('정보를 입력하세요');
     } else if(this.state.password.length < 6) {
@@ -62,17 +61,13 @@ export default class Register extends React.Component {
         gender: this.state.gender
         }
 
-        var result = 0;
-
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.state.email, this.state.password)
           .then(() =>
-            result = 1, this.props.navigation.navigate('Login'))
+            this.props.navigation.navigate('Login'))
           .catch(error => this.setState({ errorMessage: error.message }))
 
-
-        if(result = 1) {
         firebase.firestore().collection('users').add({
           email: this.state.email,
           password: this.state.password,
@@ -81,17 +76,14 @@ export default class Register extends React.Component {
           gender: this.state.gender
         })
 
-}
-
-}
-}
-
-
-    doClear() {
-      let textInput = this.refs["emailInput"];
-      textInput.clear();
+      this.props.navigation.dispatch(StackActions.reset({
+          index: 0,
+          key: null,
+          actions: [NavigationActions.navigate({ routeName: 'Login'})],
+      }));
 
     }
+}
 
 render() {
   var issignup;
@@ -187,9 +179,12 @@ render() {
                 style={styles.heart}
             />
           </View>
-          <View style={styles.btnContainer}>
-            <Button title="가입하기" style={{width:'90%', height:150}} color='#8c378b' onPress={this.handleSignUp} />
-          </View>
+          <TouchableOpacity onPress={this.handleSignUp} style={{flex: 1, marginTop: 15,}}>
+            <View style={styles.btnContainer}>
+              <Text style={styles.start}>가입하기</Text>
+            </View>
+          </TouchableOpacity>
+
           <View style={styles.signinContainer}>
             <Text style={styles.signinText}>이미 가입하셨나요?</Text>
             <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
@@ -257,7 +252,7 @@ const styles = StyleSheet.create({
   imgcontainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: 40,
   },
   heart: {
     width: 28,
@@ -265,8 +260,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   btnContainer: {
-    flex:1,
-    marginTop: 15,
+    flex:0.9,
+    backgroundColor: '#8c378b',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+  },
+  start: {
+    color: '#FFFFFF',
+    fontFamily: 'PFStardust',
   },
   signinContainer: {
     flex: 1,

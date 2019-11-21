@@ -6,6 +6,7 @@ import { Fonts } from '../Fonts';
 import firebase from '../src/config';
 import Register from './Register';
 import MainScreen from '../MainScreen';
+import SplashScreen from 'react-native-splash-screen';
 
 export default class Login extends React.Component {
 
@@ -45,6 +46,7 @@ export default class Login extends React.Component {
   //     });
   //   });
   // }
+//
 
   render() {
       return (
@@ -190,7 +192,6 @@ export default class Login extends React.Component {
         color: 'gray',
         textDecorationLine: 'underline',
         textDecorationStyle: 'solid',
-        fontFamily: 'PFStardust'
+        fontFamily: 'PFStardust',
       }
   };
-s
