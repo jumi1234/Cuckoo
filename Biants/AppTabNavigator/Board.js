@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, AsyncStorage, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, AsyncStorage, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
 import Textarea from 'react-native-textarea';
+import DismissKeyboard from 'dismissKeyboard';
 import MainScreen from '../MainScreen';
 import firebase from '../src/config';
 
@@ -242,27 +243,29 @@ handleSubmit = () => {
 
 render(){
     return(
-      <View style={style.container}>
-        <View style={style.registerContainer}>
-          <View style={style.area}>
-            <Textarea
-                name="word"
-                value={this.state.word}
-                style={style.textarea}
-                maxLength={70}
-                placeholder={'내용을 입력하세요. (70자 내외)'}
-                placeholderTextColor={'#c7c7c7'}
-                underlineColorAndroid={'transparent'}
-                onChangeText={(text) => this.setState({word: text})}
-            />
-          </View>
-          <TouchableOpacity onPress={this.handleSubmit}>
-            <View style={style.btnContainer}>
-              <Text style={style.register}>등록</Text>
+      <TouchableWithoutFeedback onPress={()=>{DismissKeyboard()}}>
+        <View style={style.container}>
+          <View style={style.registerContainer}>
+            <View style={style.area}>
+              <Textarea
+                  name="word"
+                  value={this.state.word}
+                  style={style.textarea}
+                  maxLength={70}
+                  placeholder={'내용을 입력하세요. (70자 내외)'}
+                  placeholderTextColor={'#c7c7c7'}
+                  underlineColorAndroid={'transparent'}
+                  onChangeText={(text) => this.setState({word: text})}
+              />
             </View>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={this.handleSubmit} style={{flex:0.5, height: 100,}}>
+              <View style={style.btnContainer}>
+                <Text style={style.register}>등록</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     )
   }
 
@@ -305,12 +308,12 @@ const style = StyleSheet.create({
       fontFamily: 'PFStardust',
     },
     btnContainer: {
-      flex:0.25,
+
       backgroundColor: '#8c378b',
       justifyContent: 'center',
       alignItems: 'center',
       width: 340,
-      height: '30%',
+      height: 40,
     },
     btn: {
       flex: 1,

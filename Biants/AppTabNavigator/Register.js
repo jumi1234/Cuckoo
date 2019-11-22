@@ -1,8 +1,10 @@
 import React from 'react'
-import { StyleSheet, Text, Image, TextInput, View, Button, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, Image, TextInput, View, Button, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
 import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import RNPickerSelect from 'react-native-picker-select';
-import firebase from '../src/config'
+import firebase from '../src/config';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import DismissKeyboard from 'dismissKeyboard';
 
 const databaseURL = "https://biants-project.firebaseio.com/";
 
@@ -101,104 +103,106 @@ render() {
   });
 }
     return (
-      <View style={styles.container}>
-        {this.state.errorMessage &&
-          <Text style={{ color: 'red' }}>
-            {this.state.errorMessage}
-          </Text>}
-
-        <View style={styles.inputContainer} behavior="padding" enabled>
-          <TextInput
-            placeholder="  이메일"
-            autoCapitalize="none"
-            style={styles.textInput}
-            onChangeText={(email) => this.setState({email: email})}
-            value={this.state.email}
-            ref="emailInput"
-          />
-          <TextInput
-            secureTextEntry
-            placeholder="  비밀번호"
-            autoCapitalize="none"
-            style={styles.textInput}
-            onChangeText={password => this.setState({ password })}
-            value={this.state.password}
-          />
-          <TextInput
-            placeholder="  나이"
-            autoCapitalize="none"
-            style={styles.textInput}
-            onChangeText={age => this.setState({ age })}
-            value={this.state.age}
-          />
-          <View style={styles.select}>
-            <RNPickerSelect
-              placeholder={{
-                label: '  지역',
-                value: '',
-              }}
-              onValueChange={region => this.setState({ region })}
-                items={[
-                    { label: '서울', value: '서울' },
-                    { label: '경기', value: '경기' },
-                    { label: '인천', value: '인천' },
-                    { label: '강원', value: '강원' },
-                    { label: '충북', value: '충북' },
-                    { label: '충남', value: '충남' },
-                    { label: '대전', value: '대전' },
-                    { label: '전북', value: '전북' },
-                    { label: '전남', value: '전남' },
-                    { label: '광주', value: '광주' },
-                    { label: '울산', value: '울산' },
-                    { label: '대구', value: '대구' },
-                    { label: '경북', value: '경북' },
-                    { label: '경남', value: '경남' },
-                    { label: '부산', value: '부산' },
-                    { label: '제주', value: '제주' },
-                ]}
-                value={this.state.region}
+      <TouchableWithoutFeedback onPress={()=>{DismissKeyboard()}}>
+        <View style={styles.container}>
+          {this.state.errorMessage &&
+            <Text style={{ color: 'red' }}>
+              {this.state.errorMessage}
+            </Text>}
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="  이메일"
+              autoCapitalize="none"
+              style={styles.textInput}
+              onChangeText={(email) => this.setState({email: email})}
+              value={this.state.email}
+              ref="emailInput"
             />
-          </View>
-          <View style={styles.select}>
-            <RNPickerSelect
-              placeholder={{
-                label: '  성별',
-                value: '',
-              }}
-              onValueChange={gender => this.setState({ gender })}
-                items={[
-                    { label: '여자', value: '여자' },
-                    { label: '남자', value: '남자' },
-                ]}
-                value={this.state.gender}
+            <TextInput
+              secureTextEntry
+              placeholder="  비밀번호"
+              autoCapitalize="none"
+              style={styles.textInput}
+              onChangeText={password => this.setState({ password })}
+              value={this.state.password}
             />
-          </View>
-          <View style={styles.imgcontainer}>
-            <Image
-                source={require('./img/heart.png')}
-                style={styles.heart}
+            <TextInput
+              placeholder="  나이"
+              autoCapitalize="none"
+              style={styles.textInput}
+              onChangeText={age => this.setState({ age })}
+              value={this.state.age}
             />
-          </View>
-          <TouchableOpacity onPress={this.handleSignUp} style={{flex: 1, marginTop: 15,}}>
-            <View style={styles.btnContainer}>
-              <Text style={styles.start}>가입하기</Text>
+            <View style={styles.select}>
+              <RNPickerSelect
+                placeholder={{
+                  label: '  지역',
+                  value: '',
+                }}
+                onValueChange={region => this.setState({ region })}
+                  items={[
+                      { label: '서울', value: '서울' },
+                      { label: '경기', value: '경기' },
+                      { label: '인천', value: '인천' },
+                      { label: '강원', value: '강원' },
+                      { label: '충북', value: '충북' },
+                      { label: '충남', value: '충남' },
+                      { label: '대전', value: '대전' },
+                      { label: '전북', value: '전북' },
+                      { label: '전남', value: '전남' },
+                      { label: '광주', value: '광주' },
+                      { label: '울산', value: '울산' },
+                      { label: '대구', value: '대구' },
+                      { label: '경북', value: '경북' },
+                      { label: '경남', value: '경남' },
+                      { label: '부산', value: '부산' },
+                      { label: '제주', value: '제주' },
+                  ]}
+                  value={this.state.region}
+              />
             </View>
-          </TouchableOpacity>
+            <View style={styles.select}>
+              <RNPickerSelect
+                placeholder={{
+                  label: '  성별',
+                  value: '',
+                }}
+                onValueChange={gender => this.setState({ gender })}
+                  items={[
+                      { label: '여자', value: '여자' },
+                      { label: '남자', value: '남자' },
+                  ]}
+                  value={this.state.gender}
+              />
+            </View>
 
-          <View style={styles.signinContainer}>
-            <Text style={styles.signinText}>이미 가입하셨나요?</Text>
-            <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
-                  index: 0,
-                  key: null,
-                  actions: [NavigationActions.navigate({ routeName: 'Login'})],
-              }))}>
-              <Text style={styles.signin}> 로그인</Text>
+            <View style={styles.imgcontainer}>
+              <Image
+                  source={require('./img/heart.png')}
+                  style={styles.heart}
+              />
+            </View>
+
+            <TouchableOpacity onPress={this.handleSignUp} style={{flex: 1, marginTop: 15,}}>
+              <View style={styles.btnContainer}>
+                <Text style={styles.start}>가입하기</Text>
+              </View>
             </TouchableOpacity>
+
+            <View style={styles.signinContainer}>
+              <Text style={styles.signinText}>이미 가입하셨나요?</Text>
+              <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [NavigationActions.navigate({ routeName: 'Login'})],
+                }))}>
+                <Text style={styles.signin}> 로그인</Text>
+              </TouchableOpacity>
+            </View>
+
           </View>
         </View>
-
-
-      </View>
+      </TouchableWithoutFeedback>
     )
   }
 }
@@ -210,6 +214,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2e0f5',
   },
   inputContainer: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     padding: 10,
     width: '95%',

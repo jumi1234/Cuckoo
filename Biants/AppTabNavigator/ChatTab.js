@@ -156,7 +156,6 @@ this.props.navigation.goBack();
           <View>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
-
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
@@ -183,7 +182,7 @@ this.props.navigation.goBack();
             <View style={styles.sendContainer}>
               <TouchableHighlight
               underlayColor={'#8c378b'}
-              onPress={() => this.onSendPress()}>
+              onPress={() => {this.onSendPress()}}>
                 <Text style={styles.sendLabel}>전송</Text>
               </TouchableHighlight>
             </View>
@@ -261,12 +260,16 @@ var styles = StyleSheet.create({
     padding: 5,
   },
   inputContainer: {
+    position: 'absolute',
+    bottom: 0,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
     borderTopWidth: 1,
     borderColor: '#8c378b',
+    width: '100%',
+    height: 60,
   },
   textContainer: {
     flex: 0.9,

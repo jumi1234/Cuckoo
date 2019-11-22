@@ -1,12 +1,13 @@
 import React from 'react'
-import { StyleSheet, Text, TextInput, Image, View, Button, AsyncStorage, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, TextInput, Image, View, Button, AsyncStorage, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { Icon } from 'native-base';
 import { Fonts } from '../Fonts';
 import firebase from '../src/config';
 import Register from './Register';
 import MainScreen from '../MainScreen';
-import SplashScreen from 'react-native-splash-screen';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import DismissKeyboard from 'dismissKeyboard';
 
 export default class Login extends React.Component {
 
@@ -50,6 +51,7 @@ export default class Login extends React.Component {
 
   render() {
       return (
+        <TouchableWithoutFeedback onPress={()=>{DismissKeyboard()}}>
           <View style={styles.container}>
             <View style={styles.logocontainer}>
               <Image
@@ -57,13 +59,14 @@ export default class Login extends React.Component {
                   style={styles.logo}
               />
             </View>
-            <View style={styles.inputContainer} behavior="padding" enabled>
+
+            <View style={styles.inputContainer}>
               <View style={styles.input}>
                   <Icon style={styles.icon} name='mail'/>
                   <TextInput
                       label='Email Address'
                       placeholder=' 계정을 입력하세요'
-                      style={{fontFamily: 'PFStardust'}}
+                      style={{fontFamily: 'PFStardust', width: '100%'}}
                       value={this.state.email}
                       onChangeText={email => this.setState({ email })}
                   />
@@ -74,30 +77,32 @@ export default class Login extends React.Component {
                       label='Password'
                       autoCorrect={false}
                       placeholder='  비밀번호를 입력하세요'
-                      style={{fontFamily: 'PFStardust'}}
+                      style={{fontFamily: 'PFStardust', width: '100%'}}
                       secureTextEntry
                       value={this.state.password}
                       onChangeText={password => this.setState({ password })}
                   />
               </View>
-              <TouchableOpacity onPress={() => this.onLoginPress(this)} style={{marginTop: 15,}}>
+              <Text style={styles.errorTextStyle}>{this.state.error}</Text>
+              <TouchableOpacity onPress={() => this.onLoginPress(this)} style={{marginBottom: 130, }}>
                 <View style={styles.btnContainer}>
                   <Text style={styles.start}>시작하기</Text>
                 </View>
               </TouchableOpacity>
-              <Text style={styles.errorTextStyle}>{this.state.error}</Text>
-            </View>
-            <View style={styles.signupContainer}>
-              <Text style={styles.signupText}>계정이 없으신가요? </Text>
-              <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
-                    index: 0,
-                    key: null,
-                    actions: [NavigationActions.navigate({ routeName: 'Register'})],
-                }))}>
-                <Text style={styles.signup}>계정 만들기</Text>
-              </TouchableOpacity>
+
+              <View style={styles.signupContainer}>
+                <Text style={styles.signupText}>계정이 없으신가요? </Text>
+                <TouchableOpacity onPress={() =>   this.props.navigation.dispatch(StackActions.reset({
+                      index: 0,
+                      key: null,
+                      actions: [NavigationActions.navigate({ routeName: 'Register'})],
+                  }))}>
+                  <Text style={styles.signup}>계정 만들기</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
+          </TouchableWithoutFeedback>
       );
   }
 }
@@ -106,8 +111,8 @@ export default class Login extends React.Component {
       errorTextStyle: {
           color: '#cda8d2',
           alignSelf: 'center',
-          paddingTop: 10,
-          paddingBottom: 10
+          paddingTop: 0,
+          paddingBottom: 0
       },
       container: {
         flex: 1,
@@ -117,24 +122,26 @@ export default class Login extends React.Component {
         //backgroundColor: '#DDDBE7',
       },
       logocontainer: {
-        position: 'relative',
-        top: 0,
-        flex: 0.6,
+        flex: 1,
+        position: 'absolute',
+        top: '0%',
         backgroundColor: '#f2e0f5',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
+        height: '40%',
       },
       logo: {
         width: 136,
         height: 105,
+        margin: 40,
       },
       inputContainer: {
         position: 'absolute',
         top: '40%',
         flex: 1,
         flexDirection: 'column',
-        margin: 10,
+        margin: 20,
         // borderTopWidth: 0,
         // borderBottomWidth: 1,
         // borderBottomLeftRadius: 24,
@@ -181,12 +188,12 @@ export default class Login extends React.Component {
       signupContainer: {
         flex: 1,
         flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'flex-end',
-        marginBottom: 30,
       },
       signupText: {
         color: 'gray',
-        fontFamily: 'PFStardust'
+        fontFamily: 'PFStardust',
       },
       signup: {
         color: 'gray',
