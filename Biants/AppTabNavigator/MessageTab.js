@@ -40,6 +40,8 @@ export default class MessageTab extends React.Component {
     this.state = {
     messages: {},
     keys: {},
+    today: '',
+    yesterday: '',
     };
     }
 
@@ -65,6 +67,22 @@ export default class MessageTab extends React.Component {
 
     componentDidMount() {
       this._get();
+
+      var date = new Date().getDate(); //Current Date
+      if(date < 10) {
+        date = '0' + new Date().getDate(); //Current Minutes
+      }
+      var month = new Date().getMonth() + 1; //Current Month
+      if(month < 10) {
+        month = '0' + new Date().getMonth() + 1;
+      }
+
+      var today = month.toString() + date;
+      this.setState({today: today});
+
+      var yesterdate = date - 1;
+      var yesterday = month.toString() + yesterdate;
+      this.setState({yesterday: yesterday});
     }
 
     state = {
@@ -124,6 +142,8 @@ export default class MessageTab extends React.Component {
                 gender = message.myInfo[2];
               }
 
+              var chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7]
+
               var swipeoutBtns = [
                 {
                   text: '삭제',
@@ -152,7 +172,10 @@ export default class MessageTab extends React.Component {
                           region: region,
                           check: message.check,
                           yourInfo: message.yourInfo,
-                          myInfo: message.myInfo
+                          myInfo: message.myInfo,
+                          today: this.state.today,
+                          yesterday: this.state.yesterday,
+                          chatDate: chatDate,
                         },
                       }))} }>
                       <View style={style.info}>
@@ -174,7 +197,15 @@ export default class MessageTab extends React.Component {
                     <Dialog.Button label="네" onPress={() => this.handleDelete(key)}/>
                     <Dialog.Button label="아니오" onPress={this.handleCancel}/>
                   </Dialog.Container>
-                  <Text style={style.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                  <Text style={this.state.today == chatDate ? style.time : {display:'none'}}>
+                    오늘 {message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}
+                  </Text>
+                  <Text style={this.state.yesterday == chatDate ? style.time : {display:'none'}}>
+                    어제 {message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}
+                  </Text>
+                  <Text style={(this.state.today != chatDate && this.state.yesterday != chatDate) ? style.time : {display:'none'}}>
+                    {message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]} {message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}
+                  </Text>
                 </View>
 
                 </Swipeout>
@@ -229,7 +260,7 @@ const style = StyleSheet.create({
   },
   data: {
     marginLeft: 15,
-    fontSize: 19,
+    fontSize: 18,
     fontFamily: 'PFStardust',
   },
   message: {
@@ -239,7 +270,7 @@ const style = StyleSheet.create({
     marginLeft: 15,
     width: '100%',
     fontFamily: 'PFStardust',
-    fontSize: 15,
+    fontSize: 16,
   },
   heart: {
     flex:0.1,
@@ -255,13 +286,11 @@ const style = StyleSheet.create({
     height: 13,
   },
   time: {
-    flex: 0.1,
+    flex: 0.12,
     flexDirection: 'row',
-    fontSize: 12,
+    fontSize: 13,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     fontFamily: 'PFStardust',
   },
-  swipeout: {
-  }
 });
