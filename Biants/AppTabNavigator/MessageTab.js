@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
 import Dialog from "react-native-dialog";
 import {Icon} from 'native-base';
-import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
+import { createStackNavigator, createAppContainer, StackActions, NavigationActions, NavigationEvents } from 'react-navigation';
 import Swipeout from 'react-native-swipeout';
 import FAB from 'react-native-fab';
 import Board from './Board';
@@ -57,15 +57,14 @@ export default class MessageTab extends React.Component {
             //console.log(this.state.keys);
             });
         });
-
     }
 
-    // shouldComponentUpdate(nextState) {
-    //   return true;
-    // }
+    shouldComponentUpdate(nextState) {
+      return nextState.messages !== this.state.messages;
+    }
 
     componentDidMount() {
-    this._get();
+      this._get();
     }
 
     state = {
@@ -87,16 +86,26 @@ export default class MessageTab extends React.Component {
         console.error("Error removing document: ", error);
       });
       this.handleCancel();
-      this.props.navigation.dispatch(StackActions.reset({
-          index: 0,
-          key: null,
-          actions: [NavigationActions.navigate({ routeName: 'MainScreen'})],
-      }));
+
+      var emailad = firebase.auth().currentUser.email;
+      firebase.firestore().collection("messages").where('talker', 'array-contains', emailad).orderBy('dateTime', 'desc')
+        .get()
+        .then(querySnapshot => {
+          const messages = querySnapshot.docs.map(doc => doc.data());
+              this.setState({messages: messages});
+              querySnapshot.forEach(doc => {
+                  const data = doc.data();
+                  //console.log(doc.id);
+              this.setState({keys:doc.id});
+              //console.log(this.state.keys);
+              });
+          });
     };
 
     render() {
       return (
         <View style={style.container}>
+        <NavigationEvents onDidFocus={payload => this._get()}/>
           <ScrollView>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];

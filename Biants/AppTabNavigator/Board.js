@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TextInput, Platform, Image, Button, TextField, AsyncStorage, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'native-base';
-import { createStackNavigator, createAppContainer, StackActions, NavigationActions, NavigationEvents  } from 'react-navigation';
+import { createStackNavigator, createAppContainer, StackActions, NavigationActions, NavigationEvents } from 'react-navigation';
 import Textarea from 'react-native-textarea';
 import DismissKeyboard from 'dismissKeyboard';
 import MainScreen from '../MainScreen';

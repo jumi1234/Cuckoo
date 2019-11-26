@@ -120,16 +120,21 @@ export default class ChatTab extends React.Component {
         yourInfo: this.props.navigation.getParam('yourInfo', 'no'),
       });
 
-      this.props.navigation.dispatch(StackActions.reset({
-          index: 0,
-          key: null,
-          actions: [NavigationActions.navigate({ routeName: 'MainScreen'})],
-      }));
-
+      firebase.firestore().collection("messages").doc(collectionId).collection(collectionId).orderBy('dateTime', 'asc')
+        .get()
+        .then(querySnapshot => {
+          const messages = querySnapshot.docs.map(doc => doc.data());
+              this.setState({messages: messages});
+          });
+      this.setState({isSender: 1});
     }
 
   //   shouldComponentUpdate(nextProps, nextState, nextContext) {
   //   return this.props.done !== nextProps.done;
+  // }
+
+  // shouldComponentUpdate(nextState) {
+  //   return nextState.messages !== this.state.messages;
   // }
 
 handleSubmit = () => {
@@ -246,10 +251,7 @@ var styles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     flexDirection: 'column',
-    marginBottom: -2,
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 2,
+    margin: 8,
   },
   chatofme: {
     flex: 1,
@@ -265,6 +267,7 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     padding: 5,
+    marginRight: 170,
   },
   inputContainer: {
     flexDirection: 'row',
