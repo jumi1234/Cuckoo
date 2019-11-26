@@ -8,6 +8,7 @@ import Board from './Board';
 import ChatTab from './ChatTab';
 import MessageTab from './MessageTab';
 import firebase from '../src/config';
+import App from '../App';
 
 const databaseURL = "https://biants-project.firebaseio.com/";
 
@@ -135,11 +136,15 @@ export default class HomeTab extends React.Component {
 
   }
 
+      // firebase.auth().signOut();
+
     this.props.navigation.dispatch(StackActions.reset({
         index: 0,
         key: null,
         actions: [NavigationActions.navigate({ routeName: 'MainScreen' })],
     }));
+
+
     }
 
     render() {
@@ -218,7 +223,7 @@ const style = StyleSheet.create({
     justifyContent: 'center',
   },
   info: {
-    flex: 2,
+    flex: 3,
     flexDirection: 'column',
   },
   data: {
@@ -230,6 +235,7 @@ const style = StyleSheet.create({
     marginLeft: 15,
     fontSize: 17,
     fontFamily: 'PFStardust',
+    width: '100%',
   },
   message: {
     width: 350,

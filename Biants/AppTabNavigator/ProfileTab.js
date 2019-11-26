@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity } from 'react-native';
+import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { Icon } from 'native-base';
 import Hr from "react-native-hr-component";
 import firebase from '../src/config';
@@ -25,6 +26,17 @@ export default class ProfileTab extends Component {
     region: '',
     gender: '',
     };
+  }
+
+// firebase authentication logout
+  logout() {
+    firebase.auth().signOut();
+
+    this.props.navigation.dispatch(StackActions.reset({
+      index: 0,
+      key: null,
+      actions: [NavigationActions.navigate({ routeName: 'Main' })],
+    }));
   }
 
   componentDidMount() {
@@ -96,6 +108,13 @@ export default class ProfileTab extends Component {
               </TouchableOpacity>
               <TouchableOpacity style={style.list}>
                 <Text style={style.text}>FAQ</Text>
+                <Image
+                    source={require('./img/go.png') }
+                    style={style.gobtn}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={style.list} onPress={() => this.logout()}>
+                <Text style={style.text}>로그아웃</Text>
                 <Image
                     source={require('./img/go.png') }
                     style={style.gobtn}

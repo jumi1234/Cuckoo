@@ -128,6 +128,10 @@ export default class ChatTab extends React.Component {
 
     }
 
+  //   shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   return this.props.done !== nextProps.done;
+  // }
+
 handleSubmit = () => {
 const word = {
 word: this.state.word,
@@ -141,7 +145,7 @@ this._post(word);
 //   },
 // });
 // this.props.navigation.dispatch(pushAction);
-this.props.navigation.goBack();
+// this.props.navigation.goBack();
 }
 
 
@@ -152,8 +156,9 @@ this.props.navigation.goBack();
       if(this.state.isSender != 1) {
       return (
         <View style={styles.container}>
-          <ScrollView style={styles.scrollview}>
-          <View>
+          <ScrollView style={styles.scrollview} ref="scrollView"
+             onContentSizeChange={(width, height) => this.refs.scrollView.scrollTo({y: height})}>
+          <View style={styles.scrollContainer}>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
               return (
@@ -176,7 +181,7 @@ this.props.navigation.goBack();
               <TextInput
               style={styles.input}
               value={this.state.reply}
-              maxLength={70}
+              maxLength={50}
               onChangeText={(text) => this.setState({reply: text})}/>
             </View>
             <View style={styles.sendContainer}>
@@ -192,8 +197,9 @@ this.props.navigation.goBack();
     } else if(this.state.isSender == 1) {
       return (
         <View style={styles.container}>
-          <ScrollView style={styles.scrollview}>
-          <View>
+          <ScrollView style={styles.scrollview} ref="scrollView"
+             onContentSizeChange={(width, height) => this.refs.scrollView.scrollTo({y: height})}>
+          <View style={styles.scrollContainer}>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
               return (
@@ -229,28 +235,29 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'stretch',
     backgroundColor: '#f2e0f5'
   },
-  topContainer: {
+  scrollview: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: 'black',
-    paddingTop: 20,
+  },
+  scrollContainer: {
+    flex: 0.7,
   },
   chatContainer: {
-    flex: 11,
+    flex: 1,
     flexDirection: 'column',
-    margin: 10,
+    marginBottom: -2,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 2,
   },
   chatofme: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    padding: 5,
+    padding: 0,
+    marginLeft: 170,
   },
   chat: {
     flex: 1,
@@ -260,22 +267,19 @@ var styles = StyleSheet.create({
     padding: 5,
   },
   inputContainer: {
-    position: 'absolute',
-    bottom: 0,
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ffffff',
     borderTopWidth: 1,
     borderColor: '#8c378b',
     width: '100%',
-    height: 60,
+    height: 58,
   },
   textContainer: {
     flex: 0.9,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    width: '90%'
+    width: '100%'
   },
   alreadytextContainer: {
     flex: 1,
@@ -370,7 +374,7 @@ var styles = StyleSheet.create({
     fontFamily: 'PFStardust',
   },
   input: {
-    color: '#a8a8a8',
+    color: 'black',
     paddingRight: 10,
     paddingLeft: 10,
     paddingTop: 5,
@@ -387,7 +391,8 @@ var styles = StyleSheet.create({
     fontFamily: 'PFStardust',
   },
   scrollview: {
-    height: '80%'
+    flex: 0.7,
+
   },
   text: {
     flex: 1,

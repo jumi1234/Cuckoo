@@ -60,6 +60,10 @@ export default class MessageTab extends React.Component {
 
     }
 
+    // shouldComponentUpdate(nextState) {
+    //   return true;
+    // }
+
     componentDidMount() {
     this._get();
     }
@@ -181,19 +185,19 @@ const style = StyleSheet.create({
     backgroundColor: '#f2e0f5',
   },
   head: {
-  flex:0.1,
-  flexDirection: 'row',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor:'#D9E5FF',
+    flex:0.1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'#D9E5FF',
   },
   list: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderColor:'#FFFFFF',
-    borderBottomWidth:1,
+    borderColor: '#efefef',
+    borderBottomWidth: 1,
     padding: 5,
     backgroundColor: '#FFFFFF',
   },
@@ -208,6 +212,7 @@ const style = StyleSheet.create({
     width: 52,
     height: 52,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   info: {
     flex: 2,
@@ -221,9 +226,11 @@ const style = StyleSheet.create({
   message: {
     flex: 1,
     flexDirection: 'row',
+    marginTop: 5,
     marginLeft: 15,
-    width: 350,
+    width: '100%',
     fontFamily: 'PFStardust',
+    fontSize: 15,
   },
   heart: {
     flex:0.1,

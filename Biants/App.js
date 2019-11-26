@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, AsyncStorage, TouchableOpacity } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import MainScreen from './MainScreen';
 import HomeTab from './AppTabNavigator/HomeTab';
@@ -9,6 +9,10 @@ import ChatTab from './AppTabNavigator/ChatTab';
 import ProfileTab from './AppTabNavigator/ProfileTab';
 import Login from './AppTabNavigator/Login';
 import Register from './AppTabNavigator/Register';
+import SplashScreen from 'react-native-splash-screen';
+import firebase from './src/config';
+import StackNavigator from './StackNavigator';
+import Stack from './Stack';
 
 // let loginState = '';
 // const getLoggedIn = async () => {
@@ -22,62 +26,48 @@ import Register from './AppTabNavigator/Register';
 //   return loginState;
 // }
 
-const loginState =
-AsyncStorage.getAllKeys((err, keys) => {
-  AsyncStorage.multiGet(keys, (err, stores) => {
-    stores.map((result, i, store) => {
-      // get at each store's key/value so you can work with it
-      let key = store[i][0];
-      let value = store[i][1];
-      return value;
+// Components to display when the user is LoggedIn and LoggedOut
+// Screens for logged in/out - outside the scope of this tutorial
+
+
+export default class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      loading: true,
+      user: '',
+    };
+  }
+  /**
+   * When the App component mounts, we listen for any authentication
+   * state changes in Firebase.
+   * Once subscribed, the 'user' parameter will either be null
+   * (logged out) or an Object (logged in)
+   */
+  componentDidMount() {
+    setTimeout(() => {
+     SplashScreen.hide();
+ }, 1000);
+    this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+      this.setState({
+        loading: false,
+        user,
+      });
     });
-  });
-});
-
-const AppStackNavigator = createStackNavigator({
-
-  Main:{
-     screen: loginState ? Login : Login,
-     navigationOptions: {
-
-headerTitle: (
-    <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
-        <Image
-            source={require('./AppTabNavigator/img/cukcoo_logo.png')}
-            style={{width:170, height:45}}
-        />
-    </View>
-)
-
-       }
-  },
-  MainScreen: {
-    screen: MainScreen,
-    navigationOptions: {
-        title: 'CUCKOO',
-      }
-  },
-  HomeTab: {
-    screen: HomeTab
-  },
-  Board: {
-    screen: Board
-  },
-  MessageTab: {
-    screen: MessageTab
-  },
-  ChatTab: {
-    screen: ChatTab
-  },
-  ProfileTab: {
-    screen: ProfileTab
-  },
-  Login: {
-    screen: Login
-  },
-  Register: {
-    screen: Register
-  },
-});
-
-export default createAppContainer(AppStackNavigator);
+  }
+  /**
+   * Don't forget to stop listening for authentication state changes
+   * when the component unmounts.
+   */
+  componentWillUnmount() {
+    this.authSubscription();
+  }
+  render() {
+    // The application is initialising
+    if (this.state.loading) return null;
+    // The user is an Object, so they're logged in
+    if (this.state.user) return <StackNavigator user={this.state.user}/>;
+    // The user is null, so they're logged out
+    return <Stack user={this.state.user}/>;
+  }
+}

@@ -25,7 +25,7 @@ export default class Register extends React.Component {
       }
     }
 
-  state = { email: '', password: '', age: '', region : '', gender: '', errorMessage: null,}
+  state = { email: '', password: '', passwordCheck: '', age: '', region : '', gender: '', errorMessage: null,}
 
   constructor() {
   super();
@@ -48,10 +48,12 @@ export default class Register extends React.Component {
 
   handleSignUp = () => {
 
-    if( !this.state.email || !this.state.password || !this.state.age || !this.state.region || !this.state.gender ) {
+    if( !this.state.email || !this.state.password || !this.state.passwordCheck || !this.state.age || !this.state.region || !this.state.gender ) {
       alert('정보를 입력하세요');
     } else if(this.state.password.length < 6) {
       alert('비밀번호는 6자 이상 입력하세요');
+    } else if(this.state.password != this.state.passwordCheck) {
+      alert('비밀번호가 일치하지 않습니다');
     } else if( this.state.issignup == 2 ){
       alert('중복된 이메일입니다');
     } else {
@@ -125,6 +127,14 @@ render() {
               style={styles.textInput}
               onChangeText={password => this.setState({ password })}
               value={this.state.password}
+            />
+            <TextInput
+              secureTextEntry
+              placeholder="  비밀번호 확인"
+              autoCapitalize="none"
+              style={styles.textInput}
+              onChangeText={passwordCheck => this.setState({ passwordCheck })}
+              value={this.state.passwordCheck}
             />
             <TextInput
               placeholder="  나이"
@@ -257,7 +267,7 @@ const styles = StyleSheet.create({
   imgcontainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 20,
   },
   heart: {
     width: 28,
@@ -265,11 +275,10 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   btnContainer: {
-    flex:0.9,
+    height: 45,
     backgroundColor: '#8c378b',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 40,
   },
   start: {
     color: '#FFFFFF',
@@ -281,7 +290,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 15,
-    marginBottom: 10,
   },
   signinText: {
     justifyContent: 'center',
