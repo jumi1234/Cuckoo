@@ -47,6 +47,9 @@ export default class ChatTab extends React.Component {
     componentDidMount() {
       const collectionId = this.props.navigation.getParam('collectionId', 'no');
       const replyReceiver = this.props.navigation.getParam('replyReceiver', 'no');
+      const today = this.props.navigation.getParam('today', 'no');
+      const yesterday = this.props.navigation.getParam('yesterday', 'no');
+      const chatDate = this.props.navigation.getParam('chatDate', 'no');
 
       this._get();
 
@@ -314,7 +317,7 @@ var styles = StyleSheet.create({
   },
   info: {
     color: 'black',
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: 'PFStardust'
   },
   balloonofme: {
@@ -338,7 +341,7 @@ var styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     borderStyle: 'solid',
-    fontSize: 14,
+    fontSize: 15,
     padding: 10,
     fontFamily: 'PFStardust',
   },
@@ -349,7 +352,7 @@ var styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     borderStyle: 'solid',
-    fontSize: 14,
+    fontSize: 15,
     padding: 10,
     fontFamily: 'PFStardust',
   },
