@@ -72,7 +72,9 @@ export default class Register extends React.Component {
             this.props.navigation.navigate('Login'))
           .catch(error => this.setState({ errorMessage: error.message }))
 
-        firebase.firestore().collection('users').add({
+        var em = this.state.email;
+
+        firebase.firestore().collection('users').doc(em).set({
           email: this.state.email,
           password: this.state.password,
           age: this.state.age,
@@ -251,6 +253,7 @@ const styles = StyleSheet.create({
     borderColor: '#8c378b',
     fontSize:15,
     borderRadius: 25,
+    width: '95%',
     margin: 10,
     color: '#8c378b',
     fontFamily: 'PFStardust',

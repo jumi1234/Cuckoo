@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity } from 'react-native';
 import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { Icon } from 'native-base';
+import Dialog from "react-native-dialog";
 import Hr from "react-native-hr-component";
 import firebase from '../src/config';
 
@@ -25,10 +26,11 @@ export default class ProfileTab extends Component {
     age: '',
     region: '',
     gender: '',
+    dialogVisible: false,
     };
   }
 
-// firebase authentication logout
+  // firebase authentication logout
   logout() {
     firebase.auth().signOut();
 
@@ -39,12 +41,59 @@ export default class ProfileTab extends Component {
     }));
   }
 
+  // firebase authentication user delete
+  delete(id) {
+    firebase.firestore().collection("users").doc(id)
+    .delete()
+    .then(function() {
+    }).catch(function(error) {
+      console.error("Error removing user: ", error);
+    });
+
+    var deleteWords = firebase.firestore().collection("words").where('id', '==', id)
+
+    if(deleteWords) {
+      deleteWords
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
+    }
+
+    var deleteMessage = firebase.firestore().collection("messages").where('talker', 'array-contains', id)
+
+    if(deleteMessage) {
+      deleteMessage
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
+    }
+
+    firebase.auth().currentUser
+    .delete()
+    .then(function() {
+      console.log('auth delete');
+    }).catch(function(error) {
+      // An error happened.
+    });
+
+    this.props.navigation.dispatch(StackActions.reset({
+      index: 0,
+      key: null,
+      actions: [NavigationActions.navigate({ routeName: 'Login' })],
+    }));
+  }
+
   componentDidMount() {
     firebase.firestore().collection('users').where('email', '==', firebase.auth().currentUser.email)
     .get()
     .then(querySnapshot => {
       const user = querySnapshot.docs.map(doc => doc.data());
-      console.log(user);
       const keys = Object.keys(user);
 
       const k = keys[0];
@@ -57,11 +106,19 @@ export default class ProfileTab extends Component {
       this.setState({age: age});
       this.setState({region: region});
       this.setState({gender: gender});
-      console.log(this.state.age);
     });
   }
 
+  showDialog = () => {
+    this.setState({ dialogVisible: true });
+  };
+
+  handleCancel = () => {
+    this.setState({ dialogVisible: false });
+  };
+
   render() {
+    var id = firebase.auth().currentUser.email;
     return (
       <View style={style.container}>
         <View style={style.infoContainer}>
@@ -106,15 +163,15 @@ export default class ProfileTab extends Component {
                     style={style.gobtn}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={style.list}>
-                <Text style={style.text}>FAQ</Text>
+              <TouchableOpacity style={style.list} onPress={() => this.logout()}>
+                <Text style={style.text}>로그아웃</Text>
                 <Image
                     source={require('./img/go.png') }
                     style={style.gobtn}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={style.list} onPress={() => this.logout()}>
-                <Text style={style.text}>로그아웃</Text>
+              <TouchableOpacity style={style.list} onPress={this.showDialog}>
+                <Text style={style.text}>회원탈퇴</Text>
                 <Image
                     source={require('./img/go.png') }
                     style={style.gobtn}
@@ -127,6 +184,11 @@ export default class ProfileTab extends Component {
                   style={style.logo}
               />
             </View>
+            <Dialog.Container visible={this.state.dialogVisible}>
+              <Dialog.Title style={{fontFamily:'PFStardust'}}>탈퇴하시겠습니까?</Dialog.Title>
+              <Dialog.Button label="네" color='black' style={{fontFamily:'PFStardust'}} onPress={() => this.delete(id)}/>
+              <Dialog.Button label="아니오" color='black' style={{fontFamily:'PFStardust'}} onPress={this.handleCancel}/>
+            </Dialog.Container>
          </View>
       </View>
     );

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import Dialog from "react-native-dialog";
 import {Icon} from 'native-base';
-import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
+import { createStackNavigator, createAppContainer, StackActions, NavigationActions, NavigationEvents } from 'react-navigation';
 import { Div } from 'react-native-div';
 import Board from './Board';
 import ChatTab from './ChatTab';
@@ -144,12 +144,54 @@ export default class HomeTab extends React.Component {
         actions: [NavigationActions.navigate({ routeName: 'MainScreen' })],
     }));
 
+    }
 
+    // delete word after 7days
+    delete7days() {
+      var when = new Date();
+      var days6 = when.getDate() - 7;
+      when.setDate(days6);
+
+      var day = when.getDate(); //Current Date
+      if(day < 10) {
+        day = '0' + when.getDate(); //Current Minutes
+      }
+      var mon = when.getMonth() + 1; //Current Month
+      if(mon < 10) {
+        mon = '0' + when.getMonth() + 1;
+      }
+      var yr = when.getFullYear(); //Current Year
+      var hr = when.getHours(); //Current Hours
+      if(hr < 10) {
+        hr = '0' + when.getHours();
+      }
+      var mn = when.getMinutes(); //Current Minutes
+      if(mn < 10) {
+        mn = '0' + when.getMinutes(); //Current Minutes
+      }
+      var sc = when.getSeconds(); //Current Seconds
+      if(sc < 10) {
+        sc = '0' + when.getSeconds();
+      }
+
+      var time = yr.toString() + mon + day + hr + mn + sc;
+
+      var wordAfter7 = firebase.firestore().collection("words").where('dateTime', '<=', time)
+
+      wordAfter7
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
     }
 
     render() {
       return (
         <View style={style.container}>
+        <NavigationEvents onDidBlur={payload => this._get()}/>
+          <NavigationEvents onWillBlur={() => this.delete7days()}/>
           <ScrollView>
           <View>
             {Object.keys(this.state.words).map(id => {
@@ -228,14 +270,15 @@ const style = StyleSheet.create({
   },
   data: {
     marginLeft: 15,
-    fontSize: 19,
+    fontSize: 18,
     fontFamily: 'PFStardust',
   },
   word: {
     marginLeft: 15,
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: 'PFStardust',
     width: '100%',
+    marginTop: 5,
   },
   message: {
     width: 350,
@@ -261,18 +304,6 @@ const style = StyleSheet.create({
     margin: 5,
   },
   sendbtn: {
-    color: '#75575f',
     marginLeft: 18,
   }
 });
-
-const Test = createStackNavigator({
-  HomeTab,
-  Board,
-}, {
-  initialRouteName: 'HomeTab',
-  title: ''
-}
-);
-
-const Tt = createAppContainer(Test);

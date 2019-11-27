@@ -50,10 +50,7 @@ export default class Board extends React.Component {
       });
   }
 
-  componentDidMount() {
-    var emailad = firebase.auth().currentUser.email;
-    this._get();
-
+  availableCheck() {
     firebase.firestore().collection('words').where('id', '==', firebase.auth().currentUser.email).orderBy('dateTime', 'desc').limit(1)
       .get()
       .then(querySnapshot => {
@@ -102,6 +99,11 @@ export default class Board extends React.Component {
 
         this.setState({postavailable: postavailable});
      });
+  }
+
+  componentDidMount() {
+    var emailad = firebase.auth().currentUser.email;
+    this._get();
   }
 
   handleSubmit = () => {
@@ -175,6 +177,7 @@ export default class Board extends React.Component {
         <TouchableWithoutFeedback onPress={()=>{DismissKeyboard()}}>
           <View style={style.container}>
           <NavigationEvents onDidBlur={payload => this.doClear()}/>
+          <NavigationEvents onDidFocus={() => this.availableCheck()}/>
             <View style={style.registerContainer}>
               <View style={style.area}>
                 <TextInput

@@ -47,9 +47,6 @@ export default class ChatTab extends React.Component {
     componentDidMount() {
       const collectionId = this.props.navigation.getParam('collectionId', 'no');
       const replyReceiver = this.props.navigation.getParam('replyReceiver', 'no');
-      const today = this.props.navigation.getParam('today', 'no');
-      const yesterday = this.props.navigation.getParam('yesterday', 'no');
-      const chatDate = this.props.navigation.getParam('chatDate', 'no');
 
       this._get();
 
@@ -132,36 +129,32 @@ export default class ChatTab extends React.Component {
       this.setState({isSender: 1});
     }
 
-  //   shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   return this.props.done !== nextProps.done;
-  // }
-
-  // shouldComponentUpdate(nextState) {
-  //   return nextState.messages !== this.state.messages;
-  // }
-
-handleSubmit = () => {
-const word = {
-word: this.state.word,
-weight: this.state.weight
-}
-this._post(word);
-// const pushAction = StackActions.push({
-// routeName: 'HomeTab',
-//   params: {
-//     myUserId: 9,
-//   },
-// });
-// this.props.navigation.dispatch(pushAction);
-// this.props.navigation.goBack();
-}
+  handleSubmit = () => {
+    const word = {
+    word: this.state.word,
+    weight: this.state.weight
+    }
+    this._post(word);
+  }
 
 
-    render() {
-      var age = this.props.navigation.getParam('age', 'no');
-      var region = this.props.navigation.getParam('region', 'no');
-      var email = firebase.auth().currentUser.email;
-      if(this.state.isSender != 1) {
+  render() {
+    var age = this.props.navigation.getParam('age', 'no');
+    var region = this.props.navigation.getParam('region', 'no');
+    var email = firebase.auth().currentUser.email
+    var day = new Date().getDate(); //Current Date
+    if(day < 10) {
+      day = '0' + new Date().getDate(); //Current Minutes
+    }
+    var mon = new Date().getMonth() + 1; //Current Month
+    if(mon < 10) {
+      mon = '0' + new Date().getMonth() + 1;
+    }
+    var date = mon.toString() + day;
+
+    var chatDate;
+
+    if(this.state.isSender != 1) {
       return (
         <View style={styles.container}>
           <ScrollView style={styles.scrollview} ref="scrollView"
@@ -169,6 +162,8 @@ this._post(word);
           <View style={styles.scrollContainer}>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
+              chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7];
+              console.log(chatDate);
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
@@ -177,7 +172,13 @@ this._post(word);
                     <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
                       <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
                     </View>
-                    <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    <View style={date == chatDate ? styles.date : {display: 'none'} }>
+                      <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    </View>
+                    <View style={date != chatDate ? styles.date : {display: 'none'} }>
+                      <Text style={message.sender == email ? styles.none : styles.month}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
+                      <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    </View>
                   </View>
                 </View>
               );
@@ -210,6 +211,7 @@ this._post(word);
           <View style={styles.scrollContainer}>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
+              chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7];
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
@@ -218,7 +220,13 @@ this._post(word);
                     <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
                       <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
                     </View>
-                    <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    <View style={date == chatDate ? styles.date : {display: 'none'} }>
+                      <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    </View>
+                    <View style={date != chatDate ? styles.date : {display: 'none'} }>
+                      <Text style={message.sender == email ? styles.none : styles.month}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
+                      <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                    </View>
                   </View>
                 </View>
               );
@@ -314,6 +322,21 @@ var styles = StyleSheet.create({
   },
   none: {
     display: 'none',
+  },
+  date: {
+  },
+  month: {
+    marginTop: 8,
+    marginLeft: 5,
+    color: 'gray',
+    fontFamily: 'PFStardust',
+    fontSize: 10,
+  },
+  aftertime: {
+    marginTop: 5,
+    marginLeft: 5,
+    color: 'gray',
+    fontFamily: 'PFStardust',
   },
   info: {
     color: 'black',

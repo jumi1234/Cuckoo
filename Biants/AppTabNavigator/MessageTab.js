@@ -61,8 +61,46 @@ export default class MessageTab extends React.Component {
         });
     }
 
-    shouldComponentUpdate(nextState) {
-      return nextState.messages !== this.state.messages;
+    // delete word after 7days
+    delete7days() {
+      var when = new Date();
+      var days6 = when.getDate() - 7;
+      when.setDate(days6);
+
+      var day = when.getDate(); //Current Date
+      if(day < 10) {
+        day = '0' + when.getDate(); //Current Minutes
+      }
+      var mon = when.getMonth() + 1; //Current Month
+      if(mon < 10) {
+        mon = '0' + when.getMonth() + 1;
+      }
+      var yr = when.getFullYear(); //Current Year
+      var hr = when.getHours(); //Current Hours
+      if(hr < 10) {
+        hr = '0' + when.getHours();
+      }
+      var mn = when.getMinutes(); //Current Minutes
+      if(mn < 10) {
+        mn = '0' + when.getMinutes(); //Current Minutes
+      }
+      var sc = when.getSeconds(); //Current Seconds
+      if(sc < 10) {
+        sc = '0' + when.getSeconds();
+      }
+
+      var time = yr.toString() + mon + day + hr + mn + sc;
+
+      var wordAfter7 = firebase.firestore().collection("messages").where('dateTime', '<=', time)
+
+      console.log(time);
+      wordAfter7
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          doc.ref.delete();
+        });
+      });
     }
 
     componentDidMount() {
@@ -124,6 +162,7 @@ export default class MessageTab extends React.Component {
       return (
         <View style={style.container}>
         <NavigationEvents onDidFocus={payload => this._get()}/>
+        <NavigationEvents onWillBlur={() => this.delete7days()}/>
           <ScrollView>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
@@ -173,9 +212,6 @@ export default class MessageTab extends React.Component {
                           check: message.check,
                           yourInfo: message.yourInfo,
                           myInfo: message.myInfo,
-                          today: this.state.today,
-                          yesterday: this.state.yesterday,
-                          chatDate: chatDate,
                         },
                       }))} }>
                       <View style={style.info}>
