@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, Button, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, Button, TouchableHighlight, ScrollView, AsyncStorage, TouchableOpacity } from 'react-native';
 import Dialog from "react-native-dialog";
 import {Icon} from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions, NavigationEvents } from 'react-navigation';
@@ -9,6 +9,8 @@ import ChatTab from './ChatTab';
 import MessageTab from './MessageTab';
 import firebase from '../src/config';
 import App from '../App';
+import Modal from "react-native-modal";
+
 
 const databaseURL = "https://biants-project.firebaseio.com/";
 
@@ -33,6 +35,7 @@ export default class HomeTab extends React.Component {
     message: '',
     receiver: '',
     collectionId: '',
+    dialogVisible: false,
     };
     }
 
@@ -73,11 +76,12 @@ export default class HomeTab extends React.Component {
       });
     }
 
-    state = {
-      dialogVisible: false
-    };
 
-    showDialog = () => {
+    toggleModal(visible) {
+     this.setState({ dialogVisible: visible });
+  }
+
+    showDialog() {
       this.setState({ dialogVisible: true });
     };
 
@@ -109,10 +113,12 @@ export default class HomeTab extends React.Component {
       }
       var dateTime = year.toString() + month + date + hours + min + sec;
 
-      if( (this.state.receiver) == (firebase.auth().currentUser.email) ) {
-      alert("내가 작성한 글입니다");
 
-      } else {
+    if( (this.state.receiver) == (firebase.auth().currentUser.email) ) {
+      alert("내가 작성한 글입니다");
+    } else if(this.state.message == null || ! this.state.message) {
+       alert("내용을 입력해 주세요");
+    } else {
       firebase.firestore().collection('messages').doc(dateTime.toString()).set({
         message: this.state.message,
         receiver: this.state.receiver,
@@ -134,15 +140,16 @@ export default class HomeTab extends React.Component {
         talker: [this.state.receiver, firebase.auth().currentUser.email],
       });
 
-  }
 
       // firebase.auth().signOut();
+      this.props.navigation.dispatch(StackActions.reset({
+          index: 0,
+          key: null,
+          actions: [NavigationActions.navigate({ routeName: 'MainScreen' })],
+      }));
+  }
 
-    this.props.navigation.dispatch(StackActions.reset({
-        index: 0,
-        key: null,
-        actions: [NavigationActions.navigate({ routeName: 'MainScreen' })],
-    }));
+
 
     }
 
@@ -187,9 +194,14 @@ export default class HomeTab extends React.Component {
       });
     }
 
+    doClear() {
+       this.setState({message: ''});
+    }
+
     render() {
       return (
         <View style={style.container}>
+
         <NavigationEvents onDidBlur={payload => this._get()}/>
           <NavigationEvents onWillBlur={() => this.delete7days()}/>
           <ScrollView>
@@ -213,7 +225,7 @@ export default class HomeTab extends React.Component {
                           style={style.heartimg}
                       />
                     </View>
-                    <TouchableOpacity onPress={() => {this.setState({receiver: word.id, age: word.age, region: word.region, gender: word.gender}); this.showDialog();}}>
+                    <TouchableOpacity onPress={() => {this.setState({receiver: word.id, age: word.age, region: word.region, gender: word.gender}); this.toggleModal(true);}}>
                       <View style={style.send}>
                         <Image
                             source={require('./img/balloon.png') }
@@ -222,12 +234,43 @@ export default class HomeTab extends React.Component {
                       </View>
                     </TouchableOpacity>
                   </View>
-                  <Dialog.Container visible={this.state.dialogVisible}>
-                    <Dialog.Title>쪽지 보내기</Dialog.Title>
-                    <Dialog.Input style={style.message} name="message" value={this.state.message} onChangeText={(text) => this.setState({message: text})} placeholder="내용을 입력하세요" maxLength={80}></Dialog.Input>
-                    <Dialog.Button label="보내기" color='black' onPress={this.handleSubmit}/>
-                    <Dialog.Button label="닫기" color='black' onPress={this.handleCancel}/>
-                  </Dialog.Container>
+
+                  <Modal visible={this.state.dialogVisible}>
+                    <View style={style.modal}>
+                      <TouchableHighlight onPress={() => {this.doClear(); this.toggleModal(!this.state.dialogVisible)}} style={{position: 'absolute', top: 5, right: 8, width: '100%', alignItems:'flex-end'}}>
+
+                          <Text style={style.x}>X</Text>
+
+                      </TouchableHighlight>
+                      <Image
+                          source={require('./img/balloon2.png')}
+                          style={style.balloonimg}
+                      />
+                      <Text style={style.sendMsg}>쪽지 보내기</Text>
+                      <View style={style.area}>
+                        <TextInput
+                            name="message"
+                            ref="textinput"
+                            value={this.state.message}
+                            style={style.message}
+                            maxLength={70}
+                            multiline
+                            numberOfLines={4}
+                            placeholder={'내용을 입력하세요'}
+                            placeholderTextColor={'#c7c7c7'}
+                            underlineColorAndroid={'transparent'}
+                            onChangeText={(text) => this.setState({message: text})}
+                        />
+                      </View>
+                      <View style={{position: 'absolute', top: 250,}}>
+                      <TouchableHighlight onPress={this.handleSubmit}>
+                        <View style={style.btnContainer}>
+                          <Text style={style.register}>보내기</Text>
+                        </View>
+                      </TouchableHighlight>
+                      </View>
+                    </View>
+                  </Modal>
                 </View>
               );
             })}
@@ -280,8 +323,21 @@ const style = StyleSheet.create({
     width: '100%',
     marginTop: 5,
   },
+  area: {
+    position: 'absolute',
+    top: 110,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2e0f5',
+    width:'90%',
+    height: 150,
+    fontSize:15,
+  },
   message: {
-    width: 350,
+    width: '90%',
+    height: 150,
+    fontFamily: 'PFStardust',
+    fontSize: 15,
   },
   heart: {
     flex: 1,
@@ -305,5 +361,54 @@ const style = StyleSheet.create({
   },
   sendbtn: {
     marginLeft: 18,
-  }
+  },
+  modal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderColor: '#8c378b',
+    borderWidth: 1,
+  },
+  btnContainer: {
+    backgroundColor: '#8c378b',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 340,
+    height: 40,
+    marginTop: 25,
+  },
+  xContainer: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    borderColor: '#8c378b',
+    borderWidth: 11,
+  },
+  x: {
+    color: 'black',
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
+  balloonimg: {
+    position: 'absolute',
+    top: 20,
+    width: 42,
+    height: 44,
+  },
+  sendMsg: {
+    position: 'absolute',
+    top: 80,
+    fontFamily:'PFStardust',
+    alignItems: 'center',
+    fontSize: 17,
+    marginBottom: 14,
+  },
+  register: {
+    color: '#FFFFFF',
+    fontFamily: 'PFStardust',
+
+  },
 });
