@@ -47,6 +47,9 @@ export default class ChatTab extends React.Component {
     componentDidMount() {
       const collectionId = this.props.navigation.getParam('collectionId', 'no');
       const replyReceiver = this.props.navigation.getParam('replyReceiver', 'no');
+      const yesterday = this.props.navigation.getParam('yesterday', 'no');
+
+      this.setState({yesterday: yesterday});
 
       this._get();
 
@@ -57,7 +60,7 @@ export default class ChatTab extends React.Component {
         .then(querySnapshot => {
           if(! querySnapshot.empty) {
             const data = querySnapshot.data();
-            if(data.sender == emailad) {7
+            if(data.sender == emailad) {
               this.setState({isSender: 1});
             }
          }
@@ -163,22 +166,35 @@ export default class ChatTab extends React.Component {
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
               chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7];
-              console.log(chatDate);
               return (
                 <View style={styles.chatContainer} key={id}>
                     <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
                     <View style={message.sender == email ? styles.chatofme : styles.chat}>
-                      <Text style={message.sender == email ? styles.timeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
-                      <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
-                    </View>
-                    <View style={date == chatDate ? styles.date : {display: 'none'} }>
-                      <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    </View>
-                    <View style={date != chatDate ? styles.date : {display: 'none'} }>
-                      <Text style={message.sender == email ? styles.none : styles.month}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
-                      <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    </View>
+                      <View style={chatDate == date ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.timeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate == this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.monthofme : styles.none}>어제</Text>
+                        <Text style={message.sender == email ? styles.aftertimeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate != date && chatDate != this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.fullmonth : styles.none}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
+                        <Text style={message.sender == email ? styles.aftertimeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
+                        <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
+                      </View>
+                      <View style={chatDate == date ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate == this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.none : styles.month}>어제</Text>
+                        <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate != date && chatDate != this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.none : styles.month}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
+                        <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
                   </View>
                 </View>
               );
@@ -214,19 +230,33 @@ export default class ChatTab extends React.Component {
               chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7];
               return (
                 <View style={styles.chatContainer} key={id}>
-                    <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
+                  <Text style={message.sender == email ? styles.infoofme : styles.info}>[{region}/{age}세]</Text>
                     <View style={message.sender == email ? styles.chatofme : styles.chat}>
-                      <Text style={message.sender == email ? styles.timeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
-                      <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
-                    </View>
-                    <View style={date == chatDate ? styles.date : {display: 'none'} }>
-                      <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    </View>
-                    <View style={date != chatDate ? styles.date : {display: 'none'} }>
-                      <Text style={message.sender == email ? styles.none : styles.month}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
-                      <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
-                    </View>
+                      <View style={chatDate == date ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.timeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate == this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.monthofme : styles.none}>어제</Text>
+                        <Text style={message.sender == email ? styles.aftertimeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate != date && chatDate != this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.fullmonth : styles.none}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
+                        <Text style={message.sender == email ? styles.aftertimeofme : styles.none}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={message.sender == email ? styles.ballonofme : styles.ballon}>
+                        <Text style={message.sender == email ? styles.replyofme : styles.reply}>{message.message}</Text>
+                      </View>
+                      <View style={chatDate == date ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.none : styles.time}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate == this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.none : styles.month}>어제</Text>
+                        <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
+                      <View style={chatDate != date && chatDate != this.state.yesterday ? styles.date : {display: 'none'} }>
+                        <Text style={message.sender == email ? styles.none : styles.month}>{message.dateTime[4]}{message.dateTime[5]}/{message.dateTime[6]}{message.dateTime[7]}</Text>
+                        <Text style={message.sender == email ? styles.none : styles.aftertime}>{message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}</Text>
+                      </View>
                   </View>
                 </View>
               );
@@ -330,11 +360,31 @@ var styles = StyleSheet.create({
     marginLeft: 5,
     color: 'gray',
     fontFamily: 'PFStardust',
-    fontSize: 10,
+    fontSize: 11,
+  },
+  monthofme: {
+    marginTop: 8,
+    marginLeft: 17,
+    color: 'gray',
+    fontFamily: 'PFStardust',
+    fontSize: 11,
+  },
+  fullmonth: {
+    marginTop: 8,
+    marginLeft: 6,
+    color: 'gray',
+    fontFamily: 'PFStardust',
+    fontSize: 11,
   },
   aftertime: {
     marginTop: 5,
     marginLeft: 5,
+    color: 'gray',
+    fontFamily: 'PFStardust',
+  },
+  aftertimeofme: {
+    marginTop: 5,
+    marginRight: 5,
     color: 'gray',
     fontFamily: 'PFStardust',
   },

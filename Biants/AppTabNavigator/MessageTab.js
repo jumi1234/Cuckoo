@@ -182,6 +182,7 @@ export default class MessageTab extends React.Component {
               }
 
               var chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7]
+              console.log(chatDate);
 
               var swipeoutBtns = [
                 {
@@ -212,6 +213,7 @@ export default class MessageTab extends React.Component {
                           check: message.check,
                           yourInfo: message.yourInfo,
                           myInfo: message.myInfo,
+                          yesterday: this.state.yesterday,
                         },
                       }))} }>
                       <View style={style.info}>
@@ -234,7 +236,7 @@ export default class MessageTab extends React.Component {
                     <Dialog.Button label="아니오" onPress={this.handleCancel}/>
                   </Dialog.Container>
                   <Text style={this.state.today == chatDate ? style.time : {display:'none'}}>
-                    오늘 {message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}
+                    {message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}
                   </Text>
                   <Text style={this.state.yesterday == chatDate ? style.time : {display:'none'}}>
                     어제 {message.dateTime[8]}{message.dateTime[9]}:{message.dateTime[10]}{message.dateTime[11]}

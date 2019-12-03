@@ -237,14 +237,14 @@ const style = StyleSheet.create({
     },
     textarea: {
       flex: 1,
-      fontSize: 17,
+      fontSize: 15,
       fontWeight: 'bold',
       textAlign: 'center',
+      width: '100%',
       height: 400,
       fontFamily: 'PFStardust',
     },
     btnContainer: {
-
       backgroundColor: '#8c378b',
       justifyContent: 'center',
       alignItems: 'center',
