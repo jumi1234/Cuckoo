@@ -10,9 +10,9 @@ import MessageTab from './MessageTab';
 import firebase from '../src/config';
 import App from '../App';
 import Modal from "react-native-modal";
+import { AdMobBanner } from 'react-native-admob';
 
-
-const databaseURL = "https://biants-project.firebaseio.com/";
+// const databaseURL = "https://biants-project.firebaseio.com/";
 
 export default class HomeTab extends React.Component {
 
@@ -48,21 +48,21 @@ export default class HomeTab extends React.Component {
       });
     }
 
-    _post(message) {
-    return fetch(`${databaseURL}/messages.json`, {
-    method: 'POST',
-    body: JSON.stringify(message)
-    }).then(res => {
-    if(res.status != 200) {
-    throw new Error(res.statusText);
-    }
-    return res.json();
-    }).then(data => {
-    let nextState = this.state.messages;
-    nextState[data.name] = message;
-    this.setState({messages: nextState});
-    });
-    }
+    // _post(message) {
+    // return fetch(`${databaseURL}/messages.json`, {
+    // method: 'POST',
+    // body: JSON.stringify(message)
+    // }).then(res => {
+    // if(res.status != 200) {
+    // throw new Error(res.statusText);
+    // }
+    // return res.json();
+    // }).then(data => {
+    // let nextState = this.state.messages;
+    // nextState[data.name] = message;
+    // this.setState({messages: nextState});
+    // });
+    // }
 
     componentDidMount() {
     this._get();
@@ -201,9 +201,13 @@ export default class HomeTab extends React.Component {
     render() {
       return (
         <View style={style.container}>
-
         <NavigationEvents onDidBlur={payload => this._get()}/>
-          <NavigationEvents onWillBlur={() => this.delete7days()}/>
+        <NavigationEvents onWillBlur={() => this.delete7days()}/>
+          <View style={style.ad}>
+            <AdMobBanner
+              adSize='fullBanner'
+              adUnitID='ca-app-pub-3940256099942544/6300978111'/>
+          </View>
           <ScrollView>
           <View>
             {Object.keys(this.state.words).map(id => {
@@ -236,38 +240,40 @@ export default class HomeTab extends React.Component {
                   </View>
 
                   <Modal visible={this.state.dialogVisible}>
-                    <View style={style.modal}>
-                      <TouchableHighlight onPress={() => {this.doClear(); this.toggleModal(!this.state.dialogVisible)}} style={{position: 'absolute', top: 5, right: 8, width: '100%', alignItems:'flex-end'}}>
+                    <View style={{height: 350}}>
+                      <View style={style.modal}>
+                        <TouchableHighlight onPress={() => {this.doClear(); this.toggleModal(!this.state.dialogVisible)}} style={{position: 'absolute', top: 5, right: 8, width: '100%', alignItems:'flex-end'}}>
 
-                          <Text style={style.x}>X</Text>
+                            <Text style={style.x}>X</Text>
 
-                      </TouchableHighlight>
-                      <Image
-                          source={require('./img/balloon2.png')}
-                          style={style.balloonimg}
-                      />
-                      <Text style={style.sendMsg}>쪽지 보내기</Text>
-                      <View style={style.area}>
-                        <TextInput
-                            name="message"
-                            ref="textinput"
-                            value={this.state.message}
-                            style={style.message}
-                            maxLength={70}
-                            multiline
-                            numberOfLines={4}
-                            placeholder={'내용을 입력하세요'}
-                            placeholderTextColor={'#c7c7c7'}
-                            underlineColorAndroid={'transparent'}
-                            onChangeText={(text) => this.setState({message: text})}
+                        </TouchableHighlight>
+                        <Image
+                            source={require('./img/balloon2.png')}
+                            style={style.balloonimg}
                         />
-                      </View>
-                      <View style={{position: 'absolute', top: 250,}}>
-                      <TouchableHighlight onPress={this.handleSubmit}>
-                        <View style={style.btnContainer}>
-                          <Text style={style.register}>보내기</Text>
+                        <Text style={style.sendMsg}>쪽지 보내기</Text>
+                        <View style={style.area}>
+                          <TextInput
+                              name="message"
+                              ref="textinput"
+                              value={this.state.message}
+                              style={style.message}
+                              maxLength={70}
+                              multiline
+                              numberOfLines={4}
+                              placeholder={'내용을 입력하세요'}
+                              placeholderTextColor={'#c7c7c7'}
+                              underlineColorAndroid={'transparent'}
+                              onChangeText={(text) => this.setState({message: text})}
+                          />
                         </View>
-                      </TouchableHighlight>
+                        <View style={{position: 'absolute', top: 250, width: '90%'}}>
+                        <TouchableHighlight onPress={this.handleSubmit}>
+                          <View style={style.btnContainer}>
+                            <Text style={style.register}>보내기</Text>
+                          </View>
+                        </TouchableHighlight>
+                        </View>
                       </View>
                     </View>
                   </Modal>
@@ -287,6 +293,9 @@ const style = StyleSheet.create({
     flexDirection: 'column',
     borderTopWidth: 10,
     borderColor: '#f2e0f5',
+  },
+  ad: {
+    alignItems: 'center',
   },
   list: {
     flex: 1,
@@ -374,7 +383,6 @@ const style = StyleSheet.create({
     backgroundColor: '#8c378b',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 340,
     height: 40,
     marginTop: 25,
   },
