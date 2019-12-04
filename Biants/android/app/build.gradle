@@ -207,6 +207,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.1'
     implementation "com.google.firebase:firebase-ads:18.3.0"
+    compile project(':react-native-version-check')
 
 
     // implementation 'com.google.android.gms:play-services-ads:18.3.0'
