@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, SectionList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Switch, SectionList, TouchableOpacity } from 'react-native';
 import { SwitchNavigator, NavigationActions, StackActions } from 'react-navigation';
 import { Icon } from 'native-base';
 import Dialog from "react-native-dialog";
 import Hr from "react-native-hr-component";
+import VersionCheck from "react-native-version-check";
 import firebase from '../src/config';
+import rnfirebase from 'react-native-firebase';
+import admin from "firebase-admin";
 
 export default class ProfileTab extends Component {
 
@@ -27,8 +30,84 @@ export default class ProfileTab extends Component {
     region: '',
     gender: '',
     dialogVisible: false,
+    switch1Value: false,
     };
   }
+
+  // firebase notification
+
+  async _checkPermission(){
+      const enabled = await rnfirebase.messaging().hasPermission();
+      if (enabled) {
+          // user has permissions
+          console.log(enabled);
+          this._updateTokenToServer();
+      } else {
+          // user doesn't have permission
+          this._requestPermission();
+      }
+    }
+
+    async _requestPermission(){
+      try {
+        // User has authorised
+        alert('알림을 설정하세요');
+        // await rnfirebase.messaging().requestPermission();
+        // await this._updateTokenToServer();
+      } catch (error) {
+          // User has rejected permissions
+          alert("you can't handle push notification");
+      }
+    }
+
+    async _updateTokenToServer(){
+      const fcmToken = await rnfirebase.messaging().getToken();
+      console.log(fcmToken);
+
+      const header = {
+        method: "POST",
+        headers: {
+          'Accept':  'application/json',
+           'Content-Type': 'application/json',
+           'Cache': 'no-cache'
+        },
+        body: JSON.stringify({
+          user_id: "CURRENT_USER_ID",
+          firebase_token: fcmToken
+        }),
+        credentials: 'include',
+      };
+      //const url = "http://YOUR_SERVER_URL";
+
+      // if you want to notification using server,
+      // do registry current user token
+
+      // await fetch(url, header);
+    }
+
+
+    async _listenForNotifications(){
+        // onNotificationDisplayed - ios only
+
+        this.notificationListener = firebase.notifications().onNotification((notification) => {
+          console.log('onNotification', notification);
+        });
+
+        this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+            console.log('onNotificationOpened', notificationOpen);
+        });
+
+        const notificationOpen = await firebase.notifications().getInitialNotification();
+        if (notificationOpen) {
+            console.log('getInitialNotification', notificationOpen);
+        }
+      }
+
+  // firebase notification
+
+  toggleSwitch1 = (value) => {
+      this.setState({switch1Value: value})
+   }
 
   // firebase authentication logout
   logout() {
@@ -90,6 +169,32 @@ export default class ProfileTab extends Component {
   }
 
   componentDidMount() {
+    this._checkPermission();
+    this._listenForNotifications();
+
+    var ss = rnfirebase.messaging().getToken();
+
+    var message = {
+  data: {
+    score: '850',
+    time: '2:45'
+  },
+  token: ss
+}
+
+
+// Send a message to the device corresponding to the provided
+// registration token.
+rnfirebase.messaging().notification.builder(message)
+  .then((response) => {
+    // Response is a message ID string.
+    console.log('Successfully sent message:', response);
+  })
+  .catch((error) => {
+    console.log('Error sending message:', error);
+  });
+
+
     firebase.firestore().collection('users').where('email', '==', firebase.auth().currentUser.email)
     .get()
     .then(querySnapshot => {
@@ -140,12 +245,8 @@ export default class ProfileTab extends Component {
             <Text style={style.title}>앱 정보</Text>
 
               <TouchableOpacity style={style.list}>
-
                   <Text style={style.text}>버전</Text>
-                  <Image
-                      source={require('./img/go.png') }
-                      style={style.gobtn}
-                  />
+                  <Text style={style.ver}>{VersionCheck.getCurrentVersion()}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={style.list}>
@@ -158,9 +259,9 @@ export default class ProfileTab extends Component {
               </TouchableOpacity>
               <TouchableOpacity style={style.list}>
                 <Text style={style.text}>푸시설정</Text>
-                <Image
-                    source={require('./img/go.png') }
-                    style={style.gobtn}
+                <Switch style={style.switch}
+                    onValueChange={this.toggleSwitch1}
+                    value={this.state.switch1Value}
                 />
               </TouchableOpacity>
               <TouchableOpacity style={style.list} onPress={() => this.logout()}>
@@ -245,6 +346,16 @@ const style = StyleSheet.create({
     color: 'black',
     fontSize: 15,
     fontFamily: 'PFStardust',
+  },
+  ver: {
+    position: 'absolute',
+    right: 20,
+    fontSize: 15,
+    fontFamily: 'PFStardust',
+  },
+  switch: {
+    position: 'absolute',
+    right: 5,
   },
   haertImg: {
     width: 15,
