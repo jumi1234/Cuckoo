@@ -13,22 +13,7 @@ import SplashScreen from 'react-native-splash-screen';
 import firebase from './src/config';
 import StackNavigator from './StackNavigator';
 import Stack from './Stack';
-
-// let loginState = '';
-// const getLoggedIn = async () => {
-//
-//   try {
-//     loginState = await AsyncStorage.getItem('loggedIn') || 'none';
-//   } catch (error) {
-//     // Error retrieving data
-//     console.log(error.message);
-//   }
-//   return loginState;
-// }
-
-// Components to display when the user is LoggedIn and LoggedOut
-// Screens for logged in/out - outside the scope of this tutorial
-
+import PushNotification from 'react-native-push-notification';
 
 export default class App extends React.Component {
   constructor() {
@@ -44,16 +29,27 @@ export default class App extends React.Component {
    * Once subscribed, the 'user' parameter will either be null
    * (logged out) or an Object (logged in)
    */
+
+  notification() {
+    PushNotification.localNotification({
+      message: 'aa',
+      ongoing: false,
+    });
+  }
+
+
   componentDidMount() {
     setTimeout(() => {
      SplashScreen.hide();
- }, 1000);
+    }, 1000);
     this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
       this.setState({
         loading: false,
         user,
       });
     });
+    // candel previous localNotification
+    PushNotification.cancelAllLocalNotifications();
   }
   /**
    * Don't forget to stop listening for authentication state changes
@@ -61,6 +57,7 @@ export default class App extends React.Component {
    */
   componentWillUnmount() {
     this.authSubscription();
+    PushNotification.cancelLocalNotifications();
   }
   render() {
     // The application is initialising
