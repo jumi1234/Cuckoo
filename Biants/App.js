@@ -21,6 +21,7 @@ export default class App extends React.Component {
     this.state = {
       loading: true,
       user: '',
+      aa: false,
     };
   }
   /**
@@ -31,10 +32,10 @@ export default class App extends React.Component {
    */
 
   notification() {
-    PushNotification.localNotification({
-      message: 'aa',
-      ongoing: false,
-    });
+      PushNotification.localNotification({
+        message: '메시지가 도착했습니다',
+        largeIcon:  'ic_push',
+      });
   }
 
 
@@ -48,16 +49,60 @@ export default class App extends React.Component {
         user,
       });
     });
-    // candel previous localNotification
-    PushNotification.cancelAllLocalNotifications();
   }
+
+  // pushCondition() {
+  //     if(firebase.auth().currentUser) {
+  //     firebase.firestore().collection('notification').where('id', '==', firebase.auth().currentUser.email)
+  //       .get()
+  //       .then(querySnapshot => {
+  //         const pushPermision = querySnapshot.docs.map(doc => doc.data());
+  //         if(pushPermision[0].push) {
+  //           this.setState({push: pushPermision[0].push});
+  //         }
+  //     });
+  //
+  //     firebase.firestore().collection('lastAccess').where('id', '==', firebase.auth().currentUser.email)
+  //       .get()
+  //       .then(querySnapshot => {
+  //         const access = querySnapshot.docs.map(doc => doc.data());
+  //         if(access[0].accessTime) {
+  //           this.setState({accessTime: access[0].accessTime});
+  //         }
+  //     });
+  //
+  //     const push = this.state.push;
+  //     const time = this.state.accessTime;
+  //
+  //     if(push && time) {
+  //       firebase.firestore().collection('newmessage').where('receiver', '==', firebase.auth().currentUser.email)
+  //         .get()
+  //         .then(querySnapshot => {
+  //   //         const newMsg = querySnapshot.data();
+  //          const newMsg = querySnapshot.docs.map(doc => doc.data());
+  //
+  //           if(newMsg.length > 0) {
+  //
+  //             PushNotification.localNotification({
+  //               message: '메시지가 도착했습니다',
+  //               largeIcon:  'ic_push',
+  //             });
+  //
+  //             // querySnapshot.forEach(function(doc) {
+  //             //   doc.ref.delete();
+  //             // });
+  //           }
+  //       });
+  //     }
+  //   }
+  // }
   /**
    * Don't forget to stop listening for authentication state changes
    * when the component unmounts.
    */
   componentWillUnmount() {
     this.authSubscription();
-    PushNotification.cancelLocalNotifications();
+    // this.notification();
   }
   render() {
     // The application is initialising
