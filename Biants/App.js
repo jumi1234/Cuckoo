@@ -14,6 +14,9 @@ import firebase from './src/config';
 import StackNavigator from './StackNavigator';
 import Stack from './Stack';
 import PushNotification from 'react-native-push-notification';
+import fb from 'react-native-firebase';
+
+
 
 export default class App extends React.Component {
   constructor() {
@@ -49,6 +52,17 @@ export default class App extends React.Component {
         user,
       });
     });
+
+    this._updateTokenToServer();
+    this._listenForNotifications();
+
+
+
+//    this.deleteNewmsg();
+    // firebase.firestore().collection('tokens').doc(firebase.auth().currentUser.email).set({
+    //   id: firebase.auth().currentUser.email,
+    //   token: this.state.fcmToken,
+    // });
   }
 
   // pushCondition() {
@@ -100,11 +114,97 @@ export default class App extends React.Component {
    * Don't forget to stop listening for authentication state changes
    * when the component unmounts.
    */
+
+   deleteNewmsg() {
+     if(firebase.auth().currentUser) {
+       var newMsg = firebase.firestore().collection("newmessages").where('receiver', '==', firebase.auth().currentUser.email);
+
+       newMsg
+       .get()
+       .then(function(querySnapshot) {
+         querySnapshot.forEach(function(doc) {
+           //console.log(doc.data());
+           doc.ref.delete();
+         });
+       });
+     }
+   }
+
+    async _requestPermission(){
+      try {
+        // User has authorised
+        await fb.messaging().requestPermission();
+        await this._updateTokenToServer();
+      } catch (error) {
+          // User has rejected permissions
+          alert("you can't handle push notification");
+      }
+    }
+
+    async _updateTokenToServer(){
+      const fcmToken = await fb.messaging().getToken();
+      console.log(fcmToken);
+
+      this.setState({fcmToken: fcmToken});
+
+      // const url = "https://biants-project.firebaseio.com/";
+
+      // if you want to notification using server,
+      // do registry current user token
+
+      // await fetch(url, header);
+    }
+
+    async _listenForNotifications(){
+    // onNotificationDisplayed - ios only
+
+    this.notificationListener = fb.notifications().onNotification((notification) => {
+      console.log('onNotification', notification);
+      this.notification();
+      this.deleteNewmsg();
+
+        //   dd() {
+        //   if(firebase.auth().currentUser) {
+        //     var newMsg = firebase.firestore().collection("newmessages").where('receiver', '==', firebase.auth().currentUser.email);
+        //
+        //     newMsg
+        //     .get()
+        //     .then(function(querySnapshot) {
+        //       querySnapshot.forEach(function(doc) {
+        //         console.log(doc.data());
+        //         // doc.ref.delete();
+        //       });
+        //     });
+        //   }
+        // }
+
+    });
+
+    // this.notificationOpenedListener = fb.notifications().onNotificationOpened((notificationOpen) => {
+    //     console.log('onNotificationOpened', notificationOpen);
+    // });
+    //
+    // const notificationOpen = await fb.notifications().getInitialNotification();
+    // if (notificationOpen) {
+    //     console.log('getInitialNotification', notificationOpen);
+    // }
+  }
+
+
+
   componentWillUnmount() {
     this.authSubscription();
+    this.notificationListener();
     // this.notification();
   }
   render() {
+
+    if(firebase.auth().currentUser) {
+      firebase.firestore().collection('tokens').doc(firebase.auth().currentUser.email).set({
+        id: firebase.auth().currentUser.email,
+        token: this.state.fcmToken,
+      });
+    }
     // The application is initialising
     if (this.state.loading) return null;
     // The user is an Object, so they're logged in
