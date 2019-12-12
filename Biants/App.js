@@ -36,7 +36,7 @@ export default class App extends React.Component {
 
   notification() {
       PushNotification.localNotification({
-        message: '메시지가 도착했습니다',
+        message: '새로운 메시지가 도착했습니다',
         largeIcon:  'ic_push',
       });
   }
@@ -56,13 +56,6 @@ export default class App extends React.Component {
     this._updateTokenToServer();
     this._listenForNotifications();
 
-
-
-//    this.deleteNewmsg();
-    // firebase.firestore().collection('tokens').doc(firebase.auth().currentUser.email).set({
-    //   id: firebase.auth().currentUser.email,
-    //   token: this.state.fcmToken,
-    // });
   }
 
   // pushCondition() {
@@ -115,6 +108,20 @@ export default class App extends React.Component {
    * when the component unmounts.
    */
 
+   pushCondition() {
+     if(firebase.auth().currentUser) {
+        firebase.firestore().collection('notification').where('id', '==', firebase.auth().currentUser.email)
+          .get()
+          .then(querySnapshot => {
+            const pushPermision = querySnapshot.docs.map(doc => doc.data());
+            if(pushPermision[0].push) {
+              this.setState({push: pushPermision[0].push});
+              console.log(pushPermision[0].push);
+            }
+        });
+     }
+  }
+
    deleteNewmsg() {
      if(firebase.auth().currentUser) {
        var newMsg = firebase.firestore().collection("newmessages").where('receiver', '==', firebase.auth().currentUser.email);
@@ -144,7 +151,6 @@ export default class App extends React.Component {
     async _updateTokenToServer(){
       const fcmToken = await fb.messaging().getToken();
       console.log(fcmToken);
-
       this.setState({fcmToken: fcmToken});
 
       // const url = "https://biants-project.firebaseio.com/";
@@ -159,25 +165,14 @@ export default class App extends React.Component {
     // onNotificationDisplayed - ios only
 
     this.notificationListener = fb.notifications().onNotification((notification) => {
-      console.log('onNotification', notification);
-      this.notification();
-      this.deleteNewmsg();
-
-        //   dd() {
-        //   if(firebase.auth().currentUser) {
-        //     var newMsg = firebase.firestore().collection("newmessages").where('receiver', '==', firebase.auth().currentUser.email);
-        //
-        //     newMsg
-        //     .get()
-        //     .then(function(querySnapshot) {
-        //       querySnapshot.forEach(function(doc) {
-        //         console.log(doc.data());
-        //         // doc.ref.delete();
-        //       });
-        //     });
-        //   }
-        // }
-
+        this.pushCondition();
+        if(this.state.push == true) {
+          console.log('onNotification', notification);
+          this.notification();
+          this.deleteNewmsg();
+        } else {
+          this.deleteNewmsg();
+        }
     });
 
     // this.notificationOpenedListener = fb.notifications().onNotificationOpened((notificationOpen) => {
@@ -204,6 +199,7 @@ export default class App extends React.Component {
         id: firebase.auth().currentUser.email,
         token: this.state.fcmToken,
       });
+
     }
     // The application is initialising
     if (this.state.loading) return null;
