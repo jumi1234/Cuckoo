@@ -131,6 +131,22 @@ export default class HomeTab extends React.Component {
         myInfo: [this.state.myage, this.state.myregion, this.state.mygender],
       });
 
+      firebase.firestore().collection('tokens').where('id', '==', this.state.receiver)
+      .get()
+      .then(querySnapshot => {
+        const tokens = querySnapshot.docs.map(doc => doc.data());
+        if(tokens[0].token) {
+          firebase.firestore().collection('newmessages').add({
+            message: this.state.message,
+            receiver: this.state.receiver,
+            sender: firebase.auth().currentUser.email,
+            dateTime: dateTime,
+            token:tokens[0].token,
+          });
+        }
+       });
+
+
       firebase.firestore().collection('messages').doc(dateTime.toString()).collection(dateTime.toString()).add({
         message: this.state.message,
         receiver: this.state.receiver,
@@ -304,7 +320,7 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     borderColor: '#efefef',
     borderBottomWidth: 1,
-    padding: 5,
+    padding: 3,
   },
   line: {
     flex: 1,
@@ -322,12 +338,12 @@ const style = StyleSheet.create({
   },
   data: {
     marginLeft: 15,
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'PFStardust',
   },
   word: {
     marginLeft: 15,
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: 'PFStardust',
     width: '100%',
     marginTop: 5,
