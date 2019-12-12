@@ -91,9 +91,8 @@ export default class MessageTab extends React.Component {
 
       var time = yr.toString() + mon + day + hr + mn + sc;
 
-      var wordAfter7 = firebase.firestore().collection("messages").where('dateTime', '<=', time)
+      var wordAfter7 = firebase.firestore().collection("messages").where('dateTime', '<=', time);
 
-      console.log(time);
       wordAfter7
       .get()
       .then(function(querySnapshot) {
@@ -158,11 +157,82 @@ export default class MessageTab extends React.Component {
           });
     };
 
+    // lastAccess() {
+    //   var date = new Date().getDate(); //Current Date
+    //   if(date < 10) {
+    //     date = '0' + new Date().getDate(); //Current Minutes
+    //   }
+    //   var month = new Date().getMonth() + 1; //Current Month
+    //   if(month < 10) {
+    //     month = '0' + new Date().getMonth() + 1;
+    //   }
+    //   var year = new Date().getFullYear(); //Current Year
+    //   var hours = new Date().getHours(); //Current Hours
+    //   if(hours < 10) {
+    //     hours = '0' + new Date().getHours();
+    //   }
+    //   var min = new Date().getMinutes(); //Current Minutes
+    //   if(min < 10) {
+    //     min = '0' + new Date().getMinutes(); //Current Minutes
+    //   }
+    //   var sec = new Date().getSeconds(); //Current Seconds
+    //   if(sec < 10) {
+    //     sec = '0' + new Date().getSeconds();
+    //   }
+    //   var accessTime = year.toString() + month + date + hours + min + sec;
+    //
+    //   firebase.firestore().collection('lastAccess').doc(firebase.auth().currentUser.email)
+    //   .set({
+    //       id: firebase.auth().currentUser.email,
+    //       accessTime: accessTime,
+    //   })
+    // }
+
+    deleteChat7days(id) {
+      var when = new Date();
+      var days6 = when.getDate() - 7;
+      when.setDate(days6);
+
+      var day = when.getDate(); //Current Date
+      if(day < 10) {
+        day = '0' + when.getDate(); //Current Minutes
+      }
+      var mon = when.getMonth() + 1; //Current Month
+      if(mon < 10) {
+        mon = '0' + when.getMonth() + 1;
+      }
+      var yr = when.getFullYear(); //Current Year
+      var hr = when.getHours(); //Current Hours
+      if(hr < 10) {
+        hr = '0' + when.getHours();
+      }
+      var mn = when.getMinutes(); //Current Minutes
+      if(mn < 10) {
+        mn = '0' + when.getMinutes(); //Current Minutes
+      }
+      var sc = when.getSeconds(); //Current Seconds
+      if(sc < 10) {
+        sc = '0' + when.getSeconds();
+      }
+
+      var time = yr.toString() + mon + day + hr + mn + sc;
+
+      var chatAfter7 = firebase.firestore().collection("messages").doc(id).collection(id).where('dateTime', '<=', time);
+
+      chatAfter7
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          console.log(doc);
+          doc.ref.delete();
+        });
+      });
+    }
+
     render() {
       return (
         <View style={style.container}>
-        <NavigationEvents onDidFocus={payload => this._get()}/>
-        <NavigationEvents onWillBlur={() => this.delete7days()}/>
+        <NavigationEvents onDidFocus={payload => { this._get(); this.delete7days() }}/>
           <ScrollView>
             {Object.keys(this.state.messages).map(id => {
               const message = this.state.messages[id];
@@ -170,6 +240,7 @@ export default class MessageTab extends React.Component {
               var age;
               var region;
               var gender;
+              var id = message.id;
 
               if(message.check == firebase.auth().currentUser.email) {
                 age = message.yourInfo[0];
@@ -182,13 +253,12 @@ export default class MessageTab extends React.Component {
               }
 
               var chatDate = message.dateTime[4] + message.dateTime[5] +message.dateTime[6] + message.dateTime[7]
-              console.log(chatDate);
 
               var swipeoutBtns = [
                 {
                   text: '삭제',
                   onPress: () => [id = message.id, this.handleDelete(id)],
-                  backgroundColor: '#f2e0f5',
+                  backgroundColor: '#D5D5D5',
                 }
               ]
               return (
@@ -203,6 +273,7 @@ export default class MessageTab extends React.Component {
                     />
                     </View>
                     <View style={{flex:0.7}}>
+                    <NavigationEvents onDidFocus={() => this.deleteChat7days(id)}/>
                     <TouchableOpacity onPress={() => {this.props.navigation.dispatch(StackActions.push({
                       routeName: 'ChatTab',
                         params: {
@@ -214,6 +285,7 @@ export default class MessageTab extends React.Component {
                           yourInfo: message.yourInfo,
                           myInfo: message.myInfo,
                           yesterday: this.state.yesterday,
+                          time: this.state.time,
                         },
                       }))} }>
                       <View style={style.info}>
@@ -276,7 +348,7 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     borderColor: '#efefef',
     borderBottomWidth: 1,
-    padding: 5,
+    padding: 2,
     backgroundColor: '#FFFFFF',
   },
   line: {
@@ -298,7 +370,7 @@ const style = StyleSheet.create({
   },
   data: {
     marginLeft: 15,
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'PFStardust',
   },
   message: {
@@ -308,7 +380,7 @@ const style = StyleSheet.create({
     marginLeft: 15,
     width: '100%',
     fontFamily: 'PFStardust',
-    fontSize: 16,
+    fontSize: 15,
   },
   heart: {
     flex:0.1,
@@ -330,5 +402,6 @@ const style = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     fontFamily: 'PFStardust',
+    marginRight: 5,
   },
 });
