@@ -37,7 +37,7 @@ export default class App extends React.Component {
   notification() {
       PushNotification.localNotification({
         message: '새로운 메시지가 도착했습니다',
-        largeIcon:  'ic_push',
+        largeIcon: 'ic_launcher_cuckoo',
       });
   }
 
@@ -152,46 +152,28 @@ export default class App extends React.Component {
       const fcmToken = await fb.messaging().getToken();
       console.log(fcmToken);
       this.setState({fcmToken: fcmToken});
-
-      // const url = "https://biants-project.firebaseio.com/";
-
-      // if you want to notification using server,
-      // do registry current user token
-
-      // await fetch(url, header);
     }
 
-    async _listenForNotifications(){
-    // onNotificationDisplayed - ios only
+    async _listenForNotifications() {
 
-    this.notificationListener = fb.notifications().onNotification((notification) => {
-        this.pushCondition();
-        if(this.state.push == true) {
-          console.log('onNotification', notification);
-          this.notification();
-          this.deleteNewmsg();
-        } else {
-          this.deleteNewmsg();
-        }
-    });
-
-    // this.notificationOpenedListener = fb.notifications().onNotificationOpened((notificationOpen) => {
-    //     console.log('onNotificationOpened', notificationOpen);
-    // });
-    //
-    // const notificationOpen = await fb.notifications().getInitialNotification();
-    // if (notificationOpen) {
-    //     console.log('getInitialNotification', notificationOpen);
-    // }
-  }
-
-
+      this.notificationListener = fb.notifications().onNotification((notification) => {
+          this.pushCondition();
+          if(this.state.push == true) {
+            console.log('onNotification', notification);
+            this.notification();
+            this.deleteNewmsg();
+          } else {
+            this.deleteNewmsg();
+          }
+      });
+    }
 
   componentWillUnmount() {
     this.authSubscription();
     this.notificationListener();
     // this.notification();
   }
+
   render() {
 
     if(firebase.auth().currentUser) {
