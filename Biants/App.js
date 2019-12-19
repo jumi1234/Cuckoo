@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, AsyncStorage, TouchableOpacity } from 'react-native';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator, createAppContainer, StackActions, NavigationActions } from 'react-navigation';
 import MainScreen from './MainScreen';
 import HomeTab from './AppTabNavigator/HomeTab';
 import Board from './AppTabNavigator/Board';
@@ -24,7 +24,6 @@ export default class App extends React.Component {
     this.state = {
       loading: true,
       user: '',
-      aa: false,
     };
   }
   /**
@@ -38,6 +37,8 @@ export default class App extends React.Component {
       PushNotification.localNotification({
         message: '새로운 메시지가 도착했습니다',
         largeIcon: 'ic_launcher_cuckoo',
+        // playSound: true(default) occur crash when user click notification while app is running in background
+        // playSound: false,
       });
   }
 
@@ -108,7 +109,7 @@ export default class App extends React.Component {
    * when the component unmounts.
    */
 
-   pushCondition() {
+   async pushCondition() {
      if(firebase.auth().currentUser) {
         firebase.firestore().collection('notification').where('id', '==', firebase.auth().currentUser.email)
           .get()
@@ -116,11 +117,10 @@ export default class App extends React.Component {
             const pushPermision = querySnapshot.docs.map(doc => doc.data());
             if(pushPermision[0].push) {
               this.setState({push: pushPermision[0].push});
-              console.log(pushPermision[0].push);
             }
         });
      }
-  }
+   }
 
    deleteNewmsg() {
      if(firebase.auth().currentUser) {
@@ -130,8 +130,9 @@ export default class App extends React.Component {
        .get()
        .then(function(querySnapshot) {
          querySnapshot.forEach(function(doc) {
-           //console.log(doc.data());
-           doc.ref.delete();
+           if(doc) {
+             doc.ref.delete();
+           }
          });
        });
      }
@@ -150,38 +151,57 @@ export default class App extends React.Component {
 
     async _updateTokenToServer(){
       const fcmToken = await fb.messaging().getToken();
-      console.log(fcmToken);
       this.setState({fcmToken: fcmToken});
     }
 
     async _listenForNotifications() {
 
+      // Foreground
       this.notificationListener = fb.notifications().onNotification((notification) => {
-          this.pushCondition();
-          if(this.state.push == true) {
+          // this.pushCondition();
+          // if(this.state.push == true) {
             console.log('onNotification', notification);
-            this.notification();
-            this.deleteNewmsg();
-          } else {
-            this.deleteNewmsg();
-          }
+             this.notification();
+          //   this.deleteNewmsg();
+          // } else {
+          //   this.deleteNewmsg();
+          // }
       });
-    }
+
+      this.messageListener = fb.messaging().onMessage((notification ) => {
+      // Process your message as required
+      // This listener is called with the app activated
+        console.log('활성화 중 앱 오픈' + notification);
+      });
+
+      // Background
+      this.notificationOpenedListener = fb.notifications().onNotificationOpened((notificationOpen) => {
+        console.log('어플 오픈');
+      });
+
+      // Closed
+      const notificationOpen = await fb.notifications().getInitialNotification();
+        if (notificationOpen) {
+           console.log('어플 오픈(close)');
+        }
+      }
 
   componentWillUnmount() {
     this.authSubscription();
     this.notificationListener();
-    // this.notification();
+    this.notificationOpenedListener();
+    this.messageListener();
   }
 
   render() {
 
     if(firebase.auth().currentUser) {
-      firebase.firestore().collection('tokens').doc(firebase.auth().currentUser.email).set({
-        id: firebase.auth().currentUser.email,
-        token: this.state.fcmToken,
-      });
-
+      if(this.state.fcmToken) {
+        firebase.firestore().collection('tokens').doc(firebase.auth().currentUser.email).set({
+          id: firebase.auth().currentUser.email,
+          token: this.state.fcmToken,
+        });
+      }
     }
     // The application is initialising
     if (this.state.loading) return null;
