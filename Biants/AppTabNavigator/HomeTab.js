@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, Button, TouchableHighlight, ScrollView, AsyncStorage, TouchableOpacity } from 'react-native';
 import Dialog from "react-native-dialog";
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import { createStackNavigator, createAppContainer, StackActions, NavigationActions, NavigationEvents } from 'react-navigation';
 import { Div } from 'react-native-div';
 import Board from './Board';
@@ -11,6 +11,7 @@ import firebase from '../src/config';
 import App from '../App';
 import Modal from "react-native-modal";
 import { AdMobBanner } from 'react-native-admob';
+import PTRView from 'react-native-pull-to-refresh';
 
 // const databaseURL = "https://biants-project.firebaseio.com/";
 
@@ -214,91 +215,99 @@ export default class HomeTab extends React.Component {
        this.setState({message: ''});
     }
 
+    onRefresh = () => {
+      setTimeout(() => {
+        this._get();
+      }, 1000);
+    }
+
     render() {
       return (
-        <View style={style.container}>
-        <NavigationEvents onDidBlur={payload => this._get()}/>
-        <NavigationEvents onWillBlur={() => this.delete7days()}/>
-          <View style={style.ad}>
-            <AdMobBanner
-              adSize='fullBanner'
-              adUnitID='ca-app-pub-3940256099942544/6300978111'/>
-          </View>
-          <ScrollView>
-          <View>
-            {Object.keys(this.state.words).map(id => {
-              const word = this.state.words[id];
-              return (
-                <View style={style.list} key={id}>
-                  <View style={style.line}>
-                    <Image
-                        source={ word.gender == '남자' ? require('./img/male.png') : require('./img/female.png') }
-                        style={style.genderImg}
-                    />
-                    <View style={style.info}>
-                      <Text style={style.data}>[{word.region}/{word.age}세]</Text>
-                      <Text style={style.word}>{word.word}</Text>
-                    </View>
-                    <View style={style.heart}>
+        <PTRView onRefresh={this.onRefresh}>
+          <View style={style.container}>
+          <NavigationEvents onDidBlur={payload => this._get()}/>
+          <NavigationEvents onWillBlur={() => this.delete7days()}/>
+            <View style={style.ad}>
+              <AdMobBanner
+                adSize='fullBanner'
+                adUnitID='ca-app-pub-3940256099942544/6300978111'/>
+            </View>
+            <ScrollView>
+            <View>
+              {Object.keys(this.state.words).map(id => {
+                const word = this.state.words[id];
+                return (
+                  <View style={style.list} key={id}>
+                    <View style={style.line}>
                       <Image
-                          source={require('./img/pkheart.png') }
-                          style={style.heartimg}
+                          source={ word.gender == '남자' ? require('./img/male.png') : require('./img/female.png') }
+                          style={style.genderImg}
                       />
-                    </View>
-                    <TouchableOpacity onPress={() => {this.setState({receiver: word.id, age: word.age, region: word.region, gender: word.gender}); this.toggleModal(true);}}>
-                      <View style={style.send}>
+                      <View style={style.info}>
+                        <Text style={style.data}>[{word.region}/{word.age}세]</Text>
+                        <Text style={style.word}>{word.word}</Text>
+                      </View>
+                      <View style={style.heart}>
                         <Image
-                            source={require('./img/balloon.png') }
-                            style={style.sendbtn}
+                            source={require('./img/pkheart.png') }
+                            style={style.heartimg}
                         />
                       </View>
-                    </TouchableOpacity>
-                  </View>
-
-                  <Modal visible={this.state.dialogVisible}>
-                    <View style={{height: 350}}>
-                      <View style={style.modal}>
-                        <TouchableHighlight onPress={() => {this.doClear(); this.toggleModal(!this.state.dialogVisible)}} style={{position: 'absolute', top: 5, right: 8, width: '100%', alignItems:'flex-end'}}>
-
-                            <Text style={style.x}>X</Text>
-
-                        </TouchableHighlight>
-                        <Image
-                            source={require('./img/balloon2.png')}
-                            style={style.balloonimg}
-                        />
-                        <Text style={style.sendMsg}>쪽지 보내기</Text>
-                        <View style={style.area}>
-                          <TextInput
-                              name="message"
-                              ref="textinput"
-                              value={this.state.message}
-                              style={style.message}
-                              maxLength={70}
-                              multiline
-                              numberOfLines={4}
-                              placeholder={'내용을 입력하세요'}
-                              placeholderTextColor={'#c7c7c7'}
-                              underlineColorAndroid={'transparent'}
-                              onChangeText={(text) => this.setState({message: text})}
+                      <TouchableOpacity onPress={() => {this.setState({receiver: word.id, age: word.age, region: word.region, gender: word.gender}); this.toggleModal(true);}}>
+                        <View style={style.send}>
+                          <Image
+                              source={require('./img/balloon.png') }
+                              style={style.sendbtn}
                           />
                         </View>
-                        <View style={{position: 'absolute', top: 250, width: '90%'}}>
-                        <TouchableHighlight onPress={this.handleSubmit}>
-                          <View style={style.btnContainer}>
-                            <Text style={style.register}>보내기</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <Modal visible={this.state.dialogVisible}>
+                      <View style={{height: 350}}>
+                        <View style={style.modal}>
+                          <TouchableHighlight onPress={() => {this.doClear(); this.toggleModal(!this.state.dialogVisible)}} style={{position: 'absolute', top: 5, right: 8, width: '100%', alignItems:'flex-end'}}>
+
+                              <Text style={style.x}>X</Text>
+
+                          </TouchableHighlight>
+                          <Image
+                              source={require('./img/balloon2.png')}
+                              style={style.balloonimg}
+                          />
+                          <Text style={style.sendMsg}>쪽지 보내기</Text>
+                          <View style={style.area}>
+                            <TextInput
+                                name="message"
+                                ref="textinput"
+                                value={this.state.message}
+                                style={style.message}
+                                maxLength={70}
+                                multiline
+                                numberOfLines={4}
+                                placeholder={'내용을 입력하세요'}
+                                placeholderTextColor={'#c7c7c7'}
+                                underlineColorAndroid={'transparent'}
+                                onChangeText={(text) => this.setState({message: text})}
+                            />
                           </View>
-                        </TouchableHighlight>
+                          <View style={{position: 'absolute', top: 250, width: '90%'}}>
+                          <TouchableHighlight onPress={this.handleSubmit}>
+                            <View style={style.btnContainer}>
+                              <Text style={style.register}>보내기</Text>
+                            </View>
+                          </TouchableHighlight>
+                          </View>
                         </View>
                       </View>
-                    </View>
-                  </Modal>
-                </View>
-              );
-            })}
+                    </Modal>
+                  </View>
+                );
+              })}
+            </View>
+            </ScrollView>
           </View>
-          </ScrollView>
-        </View>
+        </PTRView>
       )
     }
 }
@@ -311,7 +320,7 @@ const style = StyleSheet.create({
     borderColor: '#f2e0f5',
   },
   ad: {
-    alignItems: 'center',
+    width: '100%',
   },
   list: {
     flex: 1,
